@@ -1,0 +1,7 @@
+{
+  "name": "e-palengke",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "vue-vite"
+}
