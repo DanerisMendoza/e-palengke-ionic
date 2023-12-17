@@ -1,7 +1,7 @@
 <template>
   <ion-app>
-    <ion-router-outlet />
-    <sidebar v-if="showSidebar" :currentRoute="currentRoute" />
+    <Sidebar />
+    <ion-router-outlet id="main-content"></ion-router-outlet>
   </ion-app>
 </template>
 
@@ -23,7 +23,7 @@ export default {
   },
   methods: {
     updateCurrentRoute() {
-      this.currentRoute = this.$route.name;
+      this.currentRoute = this.$route.name as string;
       this.showSidebar = this.currentRoute !== 'LOGIN';
     },
   },
