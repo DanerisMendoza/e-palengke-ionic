@@ -25,10 +25,28 @@
 import { IonRouterOutlet, IonButtons, IonContent, IonHeader, IonMenu, IonMenuButton, IonPage, IonTitle, IonToolbar, IonMenuToggle, IonItem, IonList } from '@ionic/vue';
 import { useStore } from 'vuex';
 import { useRoute, useRouter } from 'vue-router';
-import { ref } from 'vue';
+import { computed,ref } from 'vue';
+import { onMounted } from 'vue';
+import { onBeforeRouteUpdate } from 'vue-router';
 
 const router = useRouter();
 const store = useStore();
+
+
+const sideNav = ref<SidebarItem[]>([
+  { name: 'Item 1' },
+  { name: 'Item 2' },
+  // Add more items with the required properties
+]);
+
+interface SidebarItem {
+  name: string;
+  side_nav_children?: SidebarItem[];
+  // Add other properties as needed
+}
+
+
+
 
 const logout = () => {
   localStorage.setItem('e-palengke-token', '');
@@ -42,19 +60,16 @@ const getAllSideNav = async () => {
   });
 }
 
-getAllSideNav()
+// const USER_DETAILS = store.getters.USER_DETAILS;
+const USER_DETAILS = computed(() => store.getters.USER_DETAILS);
 
-const sideNav = ref<SidebarItem[]>([
-  { name: 'Item 1' },
-  { name: 'Item 2' },
-  // Add more items with the required properties
-]);
-
-interface SidebarItem {
-  name: string;
-  side_nav_children?: SidebarItem[];
-  // Add other properties as needed
+const getUserProfile = async () => {
+  await store.dispatch("GetUserDetails")
 }
+
+   getAllSideNav();
+   getUserProfile();
+
 
 
 const navigateTo = (item: SidebarItem) => {
