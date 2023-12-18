@@ -1,8 +1,10 @@
 <template>
-    <ProductCustomerViewDialog />
-    <ion-button ref="myButton" id="open-modal" expand="block" v-show="isButtonVisible"></ion-button>
+    <ProductCustomerViewDialog v-if="sidenavViewer === 'store'" />
+    <ion-button v-if="sidenavViewer === 'store'" ref="myButton" id="open-modal" expand="block" v-show="isButtonVisible"></ion-button>
     <l-map ref="map" :zoom="zoom" :center="center">
-        <l-tile-layer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" name="OpenStreetMap"></l-tile-layer>
+        <!-- <l-tile-layer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" name="OpenStreetMap"></l-tile-layer> -->
+        <l-tile-layer :url="googleStreets.url" :maxZoom="googleStreets.maxZoom"
+            :subdomains="googleStreets.subdomains"></l-tile-layer>
         <!-- current marker(dynamic icon) -->
         <l-marker v-if="MARKER_LAT_LNG !== null" :lat-lng="MARKER_LAT_LNG" :icon="computedMarker"></l-marker>
         <!-- multiple marker(stores) -->
@@ -13,7 +15,7 @@
         </div>
         <!-- radius -->
         <l-circle v-if="MARKER_LAT_LNG !== null" :lat-lng="MARKER_LAT_LNG" :radius="circleRadius" :fill="true"
-            :fill-opacity="0.2" :color="'rgb(242 159 19)'" style="cursor: move"></l-circle>
+            :fill-opacity="0.1" :color="'#1919FF'"  :weight="0.5" style="cursor: move"></l-circle>
     </l-map>
 </template>
   
@@ -167,7 +169,12 @@ export default defineComponent({
 
     data() {
         return {
-            isButtonVisible:false,
+            googleStreets: {
+        url: 'http://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}',
+        maxZoom: 20,
+        subdomains: ['mt0', 'mt1', 'mt2', 'mt3'],
+      },
+            isButtonVisible: false,
             mapReady: false,
             personMarker: L.icon({
                 iconUrl: personMarker,

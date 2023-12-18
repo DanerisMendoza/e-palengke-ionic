@@ -8,7 +8,7 @@
     <ion-content>
       <ion-list>
         <ion-menu-toggle>
-          <ion-item v-for="(item, index) in sideNav" :key="index" @click="navigateTo(item)">
+          <ion-item v-for="(item, index) in SIDE_NAV" :key="index" @click="navigateTo(item)">
             <!-- Use ion-icon if you have an icon property in your 'item' object -->
             <!-- <ion-icon slot="start" :icon="item.icon"></ion-icon> -->
             {{ item.name }}
@@ -25,62 +25,52 @@
 import { IonRouterOutlet, IonButtons, IonContent, IonHeader, IonMenu, IonMenuButton, IonPage, IonTitle, IonToolbar, IonMenuToggle, IonItem, IonList } from '@ionic/vue';
 import { useStore } from 'vuex';
 import { useRoute, useRouter } from 'vue-router';
-import { computed,ref } from 'vue';
-import { onMounted } from 'vue';
-import { onBeforeRouteUpdate } from 'vue-router';
+import { computed, ref } from 'vue';
+import { watch, onBeforeUnmount } from 'vue';
+
 
 const router = useRouter();
+const currentRoute = useRoute();
 const store = useStore();
-
-
-const sideNav = ref<SidebarItem[]>([
-  { name: 'Item 1' },
-  { name: 'Item 2' },
-  // Add more items with the required properties
-]);
-
-interface SidebarItem {
-  name: string;
-  side_nav_children?: SidebarItem[];
-  // Add other properties as needed
-}
-
-
-
+const USER_DETAILS = computed(() => store.getters.USER_DETAILS);
+const currentRouteName = computed(() => currentRoute.name);
 
 const logout = () => {
   localStorage.setItem('e-palengke-token', '');
-  router.push({ name: 'LOGIN' });
+  router.replace({ name: 'LOGIN' });
+  // window.location.reload()
 }
 
-const getAllSideNav = async () => {
-  await store.dispatch('GetSideNav').then((response) => {
-    sideNav.value = response;
-    console.log(response)
-  });
+const SIDE_NAV = computed(() => store.getters.SIDE_NAV);
+
+const GetAllSideNav = async () => {
+  await store.dispatch('GetSideNav')
+}
+const GetUserDetails = async () => {
+  await store.dispatch('GetUserDetails').then(() => {
+    console.log(USER_DETAILS)
+    store.commit('PROFILE_PATH', USER_DETAILS.value.base64img == null ? require("../../assets/sample.jpg") : USER_DETAILS.value.base64img)
+  })
 }
 
-// const USER_DETAILS = store.getters.USER_DETAILS;
-const USER_DETAILS = computed(() => store.getters.USER_DETAILS);
+watch(() => currentRouteName.value, (newRoute, oldRoute) => { 
+  if (newRoute != 'LOGIN') {
+    GetAllSideNav();
+    GetUserDetails();
+  }
+});
 
-const getUserProfile = async () => {
-  await store.dispatch("GetUserDetails")
-}
+if (currentRouteName.value != 'LOGIN') {
+    GetAllSideNav();
+    GetUserDetails();
+  }
 
-   getAllSideNav();
-   getUserProfile();
-
-
-
-const navigateTo = (item: SidebarItem) => {
+const navigateTo = (item: any) => {
   if (item.side_nav_children && item.side_nav_children.length > 0) {
     // Handle dropdown logic if needed
   } else {
     // close the menu here
-    router.push({ name: item.name });
+    router.replace({ name: item.name });
   }
 };
-
-
-
 </script>

@@ -2,7 +2,6 @@
   <ion-page>
     <Toolbar />
     <ion-content>
-      <h1>Home</h1>
     </ion-content>
   </ion-page>
 </template>

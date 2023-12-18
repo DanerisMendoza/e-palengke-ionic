@@ -7,6 +7,7 @@ export default {
     ALL_SIDE_NAV: [],
     USER_DETAILS: { name: null },
     USER_INSIDE_RADIUS: [],
+    PROFILE_PATH: null,
   },
 
   getters: {
@@ -14,6 +15,7 @@ export default {
     ALL_SIDE_NAV: (state) => state.ALL_SIDE_NAV,
     USER_DETAILS: (state) => state.USER_DETAILS,
     USER_INSIDE_RADIUS: (state) => state.USER_INSIDE_RADIUS,
+    PROFILE_PATH: (state) => state.PROFILE_PATH,
   },
 
   mutations: {
@@ -21,6 +23,7 @@ export default {
     ALL_SIDE_NAV: (state, data) => { state.ALL_SIDE_NAV = data },
     USER_DETAILS: (state, data) => { state.USER_DETAILS = data },
     USER_INSIDE_RADIUS: (state, data) => { state.USER_INSIDE_RADIUS = data },
+    PROFILE_PATH: (state, data) => { state.PROFILE_PATH = data },
   },
 
   actions: {

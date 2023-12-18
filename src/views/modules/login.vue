@@ -48,8 +48,7 @@ const login = async () => {
     if (response.message === 'success') {
       localStorage.setItem('e-palengke-token', response.token);
       await store.dispatch('GetSideNav').then((response) => {
-        // router.push({ name: response[0].name });
-        ionRouter.push('/' + response[0].name);
+        ionRouter.replace('/' + response[0].name);
       });
     } else if (response.message === 'not active') {
       const alert = await alertController.create({
