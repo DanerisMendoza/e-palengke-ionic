@@ -20,13 +20,14 @@
     "@capacitor/status-bar": "5.0.6",
     "@ionic/vue": "^7.0.0",
     "@ionic/vue-router": "^7.0.0",
+    "@vue-leaflet/vue-leaflet": "^0.8.4",
     "axios": "^0.21.4",
     "ionicons": "^7.0.0",
+    "leaflet": "^1.9.3",
+    "swiper": "^11.0.5",
     "vue": "^3.3.0",
     "vue-router": "^4.2.0",
-    "vuex": "^4.1.0",
-    "@vue-leaflet/vue-leaflet": "^0.8.4",
-    "leaflet": "^1.9.3"
+    "vuex": "^4.1.0"
   },
   "devDependencies": {
     "@capacitor/cli": "5.6.0",

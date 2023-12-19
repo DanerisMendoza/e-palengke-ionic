@@ -48,7 +48,7 @@ const GetAllSideNav = async () => {
 }
 const GetUserDetails = async () => {
   await store.dispatch('GetUserDetails').then(() => {
-    console.log(USER_DETAILS)
+    // console.log(USER_DETAILS)
     store.commit('PROFILE_PATH', USER_DETAILS.value.base64img == null ? require("../../assets/sample.jpg") : USER_DETAILS.value.base64img)
   })
 }

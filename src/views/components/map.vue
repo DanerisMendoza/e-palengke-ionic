@@ -1,6 +1,7 @@
 <template>
-    <ProductCustomerViewDialog v-if="sidenavViewer === 'store'" />
-    <ion-button v-if="sidenavViewer === 'store'" ref="myButton" id="open-modal" expand="block" v-show="isButtonVisible"></ion-button>
+    <ProductCustomerViewDialog v-if="sidenavViewer === 'store' " />
+    <ion-button v-if="sidenavViewer === 'store'" ref="myButton" id="open-modal" expand="block"
+        v-show="isButtonVisible"></ion-button>
     <l-map ref="map" :zoom="zoom" :center="center">
         <!-- <l-tile-layer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" name="OpenStreetMap"></l-tile-layer> -->
         <l-tile-layer :url="googleStreets.url" :maxZoom="googleStreets.maxZoom"
@@ -15,7 +16,7 @@
         </div>
         <!-- radius -->
         <l-circle v-if="MARKER_LAT_LNG !== null" :lat-lng="MARKER_LAT_LNG" :radius="circleRadius" :fill="true"
-            :fill-opacity="0.1" :color="'#1919FF'"  :weight="0.5" style="cursor: move"></l-circle>
+            :fill-opacity="0.1" :color="'#1919FF'" :weight="0.5" style="cursor: move"></l-circle>
     </l-map>
 </template>
   
@@ -143,7 +144,6 @@ export default defineComponent({
                 return branch.latitude === item[0] && branch.longitude === item[1];
             });
             this.$store.commit('SELECTED_STORE', matchingBranch)
-            console.log(this.SELECTED_STORE)
         },
         getTooltipContent(item) {
             const matchingBranch = this.STORES.find((branch) => {
@@ -170,10 +170,10 @@ export default defineComponent({
     data() {
         return {
             googleStreets: {
-        url: 'http://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}',
-        maxZoom: 20,
-        subdomains: ['mt0', 'mt1', 'mt2', 'mt3'],
-      },
+                url: 'http://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}',
+                maxZoom: 20,
+                subdomains: ['mt0', 'mt1', 'mt2', 'mt3'],
+            },
             isButtonVisible: false,
             mapReady: false,
             personMarker: L.icon({

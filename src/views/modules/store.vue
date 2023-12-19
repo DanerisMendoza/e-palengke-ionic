@@ -14,19 +14,19 @@
   
 <script setup lang="ts">
 import { IonFooter, IonRange, IonButtons, IonMenuToggle, IonIcon, IonContent, IonHeader, IonPage, IonTitle, IonToolbar, IonItem, IonInput, IonButton, useIonRouter } from '@ionic/vue';
-import { onIonViewWillEnter, onIonViewDidEnter, onIonViewWillLeave, onIonViewDidLeave } from '@ionic/vue';
+import { onIonViewWillEnter } from '@ionic/vue';
 import mapComp from "@/views/components/map.vue";
 import Toolbar from "@/views/components/toolbar.vue";
-import { computed, onMounted } from 'vue';
+import { computed} from 'vue';
 import { useStore } from 'vuex';
 import { ref } from 'vue';
-import { watch, onBeforeUnmount } from 'vue';
+import { watch} from 'vue';
 
 const store = useStore();
 const USER_DETAILS = computed(() => store.getters.USER_DETAILS);
 const circleRadius = ref(50)
 
-const watchCircleRadius = watch(circleRadius, (newValue, oldValue) => {
+watch(circleRadius, (newValue, oldValue) => {
     store.commit("CIRCLE_RADIUS", newValue * 3);
 });
 
