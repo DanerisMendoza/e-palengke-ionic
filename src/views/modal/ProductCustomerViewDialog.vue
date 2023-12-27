@@ -55,7 +55,7 @@
                     <swiper-slide v-for="(item, index) in PRODUCT">
                         <ion-card>
                             <ion-card-content>
-                                <img :src="item.base64img" alt="" />
+                                <img :src="item.base64img" alt="" style="height: 300px; width: 300px; object-fit: cover;"/>
                             </ion-card-content>
                             <ion-card-header>
                                 <ion-card-title> {{ item.name }}</ion-card-title>
