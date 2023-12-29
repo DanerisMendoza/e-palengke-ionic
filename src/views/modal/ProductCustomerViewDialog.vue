@@ -1,5 +1,5 @@
 <template>
-    <ion-modal ref="modal" trigger="open-modal" :initial-breakpoint="0.44" :breakpoints="[0, 0.44, 1]">
+    <ion-modal ref="modal" trigger="open-modal" :initial-breakpoint="0.44" :breakpoints="[0, 0.44, 1]" @willPresent="onPresent">
         <ion-content class="ion-padding">
             <ion-list>
                 <ion-item>
@@ -111,6 +111,10 @@ const logIndex = (index) => {
     firstSwiper.value.slideTo(index);
 };
 
+const onPresent = ()=> {
+    store.dispatch("GET_PRODUCT_BY_ID", SELECTED_STORE.value.id)
+}
+
 const addToCart = async(item) => {
     console.log(item)
     console.log(item.stock)
@@ -135,7 +139,7 @@ const addToCart = async(item) => {
     }
 }
 
-watch(SELECTED_STORE, (newValue, oldValue) => {
-    store.dispatch("GET_PRODUCT_BY_ID", SELECTED_STORE.value.id)
-});
+// watch(SELECTED_STORE, (newValue, oldValue) => {
+//     store.dispatch("GET_PRODUCT_BY_ID", SELECTED_STORE.value.id)
+// });
 </script>

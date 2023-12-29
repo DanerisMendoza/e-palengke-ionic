@@ -7,7 +7,7 @@
     </ion-header>
     <ion-content>
       <ion-list>
-        <ion-menu-toggle>
+        <ion-menu-toggle >
           <ion-item v-for="(item, index) in SIDE_NAV" :key="index" @click="navigateTo(item)">
             <!-- Use ion-icon if you have an icon property in your 'item' object -->
             <!-- <ion-icon slot="start" :icon="item.icon"></ion-icon> -->

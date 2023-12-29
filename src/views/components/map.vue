@@ -1,7 +1,11 @@
 <template>
-    <ProductCustomerViewDialog v-if="sidenavViewer === 'store' " />
+    <ProductCustomerViewDialog v-if="sidenavViewer === 'store'" />
     <ion-button v-if="sidenavViewer === 'store'" ref="myButton" id="open-modal" expand="block"
         v-show="isButtonVisible"></ion-button>
+    <CartDialog />
+    <ion-button v-if="sidenavViewer === 'store'" id="CartButton" color="light" class="buttons" @click="viewCart">
+        <ion-icon color="primary" :icon="cart"></ion-icon>
+    </ion-button>
     <l-map ref="map" :zoom="zoom" :center="center">
         <!-- <l-tile-layer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" name="OpenStreetMap"></l-tile-layer> -->
         <l-tile-layer :url="googleStreets.url" :maxZoom="googleStreets.maxZoom"
@@ -22,7 +26,7 @@
   
 <script >
 import { defineComponent } from 'vue';
-import { IonContent, IonHeader, IonPage, IonTitle, IonToolbar, IonItem, IonInput, IonButton, useIonRouter } from '@ionic/vue';
+import { IonModal, IonContent, IonHeader, IonPage, IonTitle, IonToolbar, IonItem, IonInput, IonButton, useIonRouter, IonIcon, } from '@ionic/vue';
 import "leaflet/dist/leaflet.css";
 import { LMap, LTileLayer, LMarker, LIcon, LCircle, LTooltip, LPopup, LControlZoom } from "@vue-leaflet/vue-leaflet";
 import L from 'leaflet';
@@ -31,6 +35,8 @@ import personMarker from '@/assets/markers/customerMarker.png';
 import sellerMarker from '@/assets/markers/sellerMarker2.png';
 import deliveryMarker from '@/assets/markers/deliveryMarker2.png';
 import ProductCustomerViewDialog from "@/views/modal/ProductCustomerViewDialog.vue";
+import CartDialog from "@/views/modal/CartDialog.vue";
+import { cart, time, alert } from 'ionicons/icons';
 
 export default defineComponent({
     components: {
@@ -46,6 +52,9 @@ export default defineComponent({
         LTooltip,
         LPopup,
         LControlZoom,
+        IonIcon,
+        IonModal,
+        CartDialog
     },
 
     props: {
@@ -54,6 +63,7 @@ export default defineComponent({
 
     computed: {
         ...mapGetters([
+            "CART",
             "CENTER",
             "ZOOM",
             "CIRCLE_RADIUS",
@@ -129,7 +139,13 @@ export default defineComponent({
         checkData(data) {
             console.log(data)
         },
-        go(item) {
+        viewCart() {
+            // this.$store.dispatch("GET_CART").then((response) => {
+            //     console.log(this.CART)
+            // });
+        },
+        async go(item) {
+            console.log('go')
             const buttonRef = this.$refs.myButton;
             if (buttonRef) {
                 // Programmatically trigger a click on the native HTML button
@@ -169,6 +185,7 @@ export default defineComponent({
 
     data() {
         return {
+            cart,
             googleStreets: {
                 url: 'http://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}',
                 maxZoom: 20,
@@ -204,5 +221,13 @@ export default defineComponent({
 
         };
     },
+
 });
 </script>
+<style>
+.buttons {
+    right: 1%;
+    position: absolute;
+    z-index: 401;
+}
+</style>

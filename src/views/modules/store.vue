@@ -6,7 +6,7 @@
         </ion-content>
         <ion-footer>
             <ion-toolbar>
-                <ion-range v-model="circleRadius" aria-label="Volume"></ion-range>
+                <ion-range v-model="circleRadius" aria-label="Volume" mode="ios"></ion-range>
             </ion-toolbar>
         </ion-footer>
     </ion-page>
@@ -32,6 +32,7 @@ watch(circleRadius, (newValue, oldValue) => {
 
 onIonViewWillEnter(async () => {
     //Get User Details
+    // console.log('aaa')
     await store.dispatch("GetUserDetails").then(async (response) => {
         //Set Leaflet Coordinates by userdetails
         const latitude = USER_DETAILS.value.customer_locations.latitude
