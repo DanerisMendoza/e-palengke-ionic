@@ -82,11 +82,11 @@ export default defineComponent({
     },
     methods: {
         itemIsCheck() {
-            console.log(this.CART)
+            // console.log(this.CART)
         },
         selectAll() {
             // this.all = !this.all
-            console.log(this.all)
+            // console.log(this.all)
         },
         async increaseQuantity(item) {
             if (item.stock > 0) {
@@ -121,7 +121,7 @@ export default defineComponent({
         cancel() {
             this.$refs.modal.$el.dismiss(null, 'cancel');
         },
-        async onPresent() {
+        async fetchItems() {
             await this.$store.dispatch("GET_CART").then((response) => {
                 const cartWithIsCheck = response.map((item) => {
                     return {
@@ -131,14 +131,73 @@ export default defineComponent({
                 });
                 this.$store.commit('CART', cartWithIsCheck)
             })
-            console.log(this.CART)
         },
-        checkout() {
-
+        onPresent() {
+            this.fetchItems()
+        },
+        async checkout() {
+            const cartLocal = this.CART.filter((item) => { return item.isCheck === true });
+            console.log(cartLocal)
+            if (cartLocal.length <= 0) {
+                return
+            }
+            if (this.USER_DETAILS.balance < this.total) {
+                const alert = await alertController.create({
+                    header: 'Warning',
+                    message: 'Insufficient Balance!',
+                    buttons: ['OK'],
+                });
+                await alert.present();
+                return;
+            }
+            cartLocal.forEach(async (item) => {
+                if (item.stock < 0) {
+                    const alert = await alertController.create({
+                        header: 'Warning',
+                        message: 'Stock is Less than Quantity!',
+                        buttons: ['OK'],
+                    });
+                    await alert.present();
+                    return;
+                }
+            });
+            const payload = {
+                cart: cartLocal,
+                status: "pending",
+                total: this.total,
+            };
+            this.$store.dispatch("ORDER", payload).then(async (response) => {
+                if (response == "invalid") {
+                    const alert = await alertController.create({
+                        header: 'Warning',
+                        message: 'Stock is Less than Quantity!',
+                        buttons: ['OK'],
+                    });
+                    await alert.present();
+                }
+                //server side validation of balance and total amount of order
+                else if (response == "insufficient balance") {
+                    const alert = await alertController.create({
+                        header: 'Warning',
+                        message: 'insufficient balance!',
+                        buttons: ['OK'],
+                    });
+                    await alert.present();
+                } else if (response == "success") {
+                    const alert = await alertController.create({
+                        header: 'Success',
+                        message: 'Order Success!',
+                        buttons: ['OK'],
+                    });
+                    await alert.present();
+                }
+                this.fetchItems()
+                this.$store.dispatch("GetUserDetails");
+            });
         }
     },
     computed: {
-        ...mapGetters(["CART", "SELECTED_STORE"]),
+        ...mapGetters(["CART", "SELECTED_STORE", "USER_DETAILS"]),
         total() {
             // Filter the items where itemIsCheck is true
             const checkedItems = this.CART.filter(item => item.isCheck);
