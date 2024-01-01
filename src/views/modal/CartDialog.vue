@@ -11,47 +11,66 @@
         <ion-content class="ion-padding">
             <ion-list>
                 <ion-grid v-for="item in CART">
-                    <ion-row>
-                        <ion-col size="4"> <img :src="item.base64img" alt=""
-                                style="height: 100px; width: 100px; object-fit: cover;" /></ion-col>
-                        <ion-col size="8">
+                    <ion-card style="margin: 0%;">
+                        <ion-card-content>
                             <ion-row>
-                                <ion-col size="1"></ion-col>
-                                <ion-col><strong>{{ item.name }}</strong></ion-col>
+                                <ion-col size="2">
+                                    <ion-checkbox style="margin-top: 100%;" v-model="item.isCheck"
+                                        @ionChange="itemIsCheck"></ion-checkbox>
+                                </ion-col>
+                                <ion-col size="4"> <img :src="item.base64img" alt=""
+                                        style="height: 100px; width: 100px; object-fit: cover;" /></ion-col>
+                                <ion-col size="6">
+                                    <ion-row>
+                                        <ion-col size="1"></ion-col>
+                                        <ion-col><strong>{{ item.name }}</strong></ion-col>
+                                    </ion-row>
+                                    <ion-row>
+                                        <ion-col size="1"></ion-col>
+                                        <ion-col>{{ item.store_name }}</ion-col>
+                                    </ion-row>
+                                    <ion-row>
+                                        <ion-col size="1"></ion-col>
+                                        <ion-col>₱{{ item.price }}</ion-col>
+                                    </ion-row>
+                                    <ion-row>
+                                        <ion-col size="1"></ion-col>
+                                        <ion-col size="3.4"><ion-button fill="outline" color="dark"
+                                                @click="deacreaseQuantity(item)"><strong>-</strong></ion-button></ion-col>
+                                        <ion-col size="3.8"><ion-button fill="outline" color="dark"><strong>{{ item.quantity
+                                        }}</strong></ion-button></ion-col>
+                                        <ion-col size="2"><ion-button fill="outline" color="dark"
+                                                @click="increaseQuantity(item)"><strong>+</strong></ion-button></ion-col>
+                                    </ion-row>
+                                </ion-col>
                             </ion-row>
-                            <ion-row>
-                                <ion-col size="1"></ion-col>
-                                <ion-col>{{ item.store_name }}</ion-col>
-                            </ion-row>
-                            <ion-row>
-                                <ion-col size="1"></ion-col>
-                                <ion-col>₱{{ item.price }}</ion-col>
-                            </ion-row>
-                            <ion-row>
-                                <ion-col size="1"></ion-col>
-                                <ion-col size="2.3"><ion-button fill="outline" color="dark"
-                                        @click="deacreaseQuantity(item)"><strong>-</strong></ion-button></ion-col>
-                                <ion-col size="2.5"><ion-button fill="outline" color="dark"><strong>{{ item.quantity
-                                }}</strong></ion-button></ion-col>
-                                <ion-col size="2.3"><ion-button fill="outline" color="dark"
-                                        @click="increaseQuantity(item)"><strong>+</strong></ion-button></ion-col>
-                            </ion-row>
-                        </ion-col>
-                    </ion-row>
-                    <ion-item-divider></ion-item-divider>
+                            <!-- <ion-item-divider></ion-item-divider> -->
+                        </ion-card-content>
+                    </ion-card>
                 </ion-grid>
             </ion-list>
         </ion-content>
         <ion-footer>
             <ion-toolbar>
-                <ion-button slot="end" :strong="true" fill="solid" color="danger" @click="checkout">Check out</ion-button>
+                <ion-grid>
+                    <ion-row class="ion-align-items-center ">
+                        <ion-col size="1"><ion-checkbox v-model="all" label-placement="end"
+                                @ionChange="selectAll">ALL</ion-checkbox></ion-col>
+                        <ion-col size="2"></ion-col>
+                        <ion-col size="4"> Total: <span style="color: red;">₱{{ total }}</span></ion-col>
+                        <ion-col size="5">
+                            <ion-button :strong="true" fill="solid" color="danger" @click="checkout"
+                                style="margin-left: 1rem;">Check out</ion-button>
+                        </ion-col>
+                    </ion-row>
+                </ion-grid>
             </ion-toolbar>
         </ion-footer>
     </ion-modal>
 </template>
 
 <script  >
-import { IonItemDivider, IonFooter, IonCol, IonGrid, IonRow, IonHeader, IonToolbar, IonButtons, IonTitle, IonInput, IonCard, IonCardHeader, IonCardTitle, IonCardSubtitle, IonCardContent, IonButton, IonModal, IonContent, IonIcon, IonItem, IonList, IonImg, IonLabel, IonSearchbar, IonChip, IonAccordion, IonAccordionGroup } from '@ionic/vue';
+import { IonCheckbox, IonItemDivider, IonFooter, IonCol, IonGrid, IonRow, IonHeader, IonToolbar, IonButtons, IonTitle, IonInput, IonCard, IonCardHeader, IonCardTitle, IonCardSubtitle, IonCardContent, IonButton, IonModal, IonContent, IonIcon, IonItem, IonList, IonImg, IonLabel, IonSearchbar, IonChip, IonAccordion, IonAccordionGroup } from '@ionic/vue';
 import { ref, onMounted, defineComponent } from 'vue';
 import { mapGetters } from "vuex";
 import { arrowBack, cart, time, alert } from 'ionicons/icons';
@@ -59,9 +78,16 @@ import { alertController } from '@ionic/vue';
 
 export default defineComponent({
     components: {
-        IonItemDivider, IonIcon, IonFooter, IonCol, IonGrid, IonRow, IonHeader, IonToolbar, IonButtons, IonTitle, IonInput, IonCard, IonCardHeader, IonCardTitle, IonCardSubtitle, IonCardContent, IonButton, IonModal, IonContent, IonIcon, IonItem, IonList, IonImg, IonLabel, IonSearchbar, IonChip, IonAccordion, IonAccordionGroup
+        IonCheckbox, IonItemDivider, IonIcon, IonFooter, IonCol, IonGrid, IonRow, IonHeader, IonToolbar, IonButtons, IonTitle, IonInput, IonCard, IonCardHeader, IonCardTitle, IonCardSubtitle, IonCardContent, IonButton, IonModal, IonContent, IonIcon, IonItem, IonList, IonImg, IonLabel, IonSearchbar, IonChip, IonAccordion, IonAccordionGroup
     },
     methods: {
+        itemIsCheck() {
+            console.log(this.CART)
+        },
+        selectAll() {
+            // this.all = !this.all
+            console.log(this.all)
+        },
         async increaseQuantity(item) {
             if (item.stock > 0) {
                 item.stock -= 1;
@@ -96,19 +122,50 @@ export default defineComponent({
             this.$refs.modal.$el.dismiss(null, 'cancel');
         },
         async onPresent() {
-            await this.$store.dispatch("GET_CART")
+            await this.$store.dispatch("GET_CART").then((response) => {
+                const cartWithIsCheck = response.map((item) => {
+                    return {
+                        ...item,
+                        isCheck: false,
+                    };
+                });
+                this.$store.commit('CART', cartWithIsCheck)
+            })
+            console.log(this.CART)
         },
         checkout() {
-      
+
         }
     },
     computed: {
         ...mapGetters(["CART", "SELECTED_STORE"]),
+        total() {
+            // Filter the items where itemIsCheck is true
+            const checkedItems = this.CART.filter(item => item.isCheck);
+
+            // Calculate the total for the filtered items
+            return checkedItems.reduce(
+                (total, item) => total + item.price * item.quantity,
+                0
+            );
+        },
+
     },
     data() {
         return {
             arrowBack,
+            all: false
         }
-    }
+    },
+    mounted() {
+
+    },
+    watch: {
+        CART: {
+            handler(val) {
+                // console.log(val)
+            },
+        },
+    },
 });
 </script>

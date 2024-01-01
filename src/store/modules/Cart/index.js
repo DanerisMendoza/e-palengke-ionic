@@ -20,7 +20,7 @@ export default {
         GET_CART({commit}){
             return new Promise((resolve,reject)=>{
             Cart.GetCart().then((response)=>{
-                commit('CART',response.data)
+                // commit('CART',response.data)
                 resolve(response.data)
               }).catch((error)=>{
                   reject(error)
