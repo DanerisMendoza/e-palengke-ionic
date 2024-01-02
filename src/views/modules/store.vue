@@ -31,8 +31,7 @@ watch(circleRadius, (newValue, oldValue) => {
 });
 
 onIonViewWillEnter(async () => {
-    //Get User Details
-    // console.log('aaa')
+
     await store.dispatch("GetUserDetails").then(async (response) => {
         //Set Leaflet Coordinates by userdetails
         const latitude = USER_DETAILS.value.customer_locations.latitude
@@ -41,7 +40,7 @@ onIonViewWillEnter(async () => {
         store.commit("CENTER", [0, 0])
         store.commit("MARKER_LAT_LNG", [latitude, longitude])
         store.commit("CENTER", [latitude, longitude])
-        store.commit("ZOOM", 17)
+        store.commit("ZOOM", 18)
         //Set Store Coordinates
         await store.dispatch("GetActiveStore").then((response) => {
             const latLngArr = response.map((item: any) => {

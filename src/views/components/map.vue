@@ -6,18 +6,16 @@
     <ion-button v-if="sidenavViewer === 'store'" id="CartButton" color="light" class="buttons" @click="viewCart">
         <ion-icon color="primary" :icon="cart"></ion-icon>
     </ion-button>
-    <l-map ref="map" :zoom="zoom" :center="center">
+    <l-map ref="mapRef" :zoom="zoom" :center="center" id="leafletMap" v-if="lmapShow">
         <!-- <l-tile-layer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" name="OpenStreetMap"></l-tile-layer> -->
         <l-tile-layer :url="googleStreets.url" :maxZoom="googleStreets.maxZoom"
             :subdomains="googleStreets.subdomains"></l-tile-layer>
         <!-- current marker(dynamic icon) -->
         <l-marker v-if="MARKER_LAT_LNG !== null" :lat-lng="MARKER_LAT_LNG" :icon="computedMarker"></l-marker>
         <!-- multiple marker(stores) -->
-        <div v-if="sidenavViewer === 'store'" v-for="(item, index) in storeMarkersInsideCircle">
-            <l-marker v-if="MARKER_LAT_LNG !== null" :lat-lng="item" :icon="sellerMarker" @click="go(item)">
-                <l-popup :content="getTooltipContent(item)"></l-popup>
-            </l-marker>
-        </div>
+        <l-marker v-if="sidenavViewer === 'store'" v-for="(item, index) in storeMarkersInsideCircle" 
+            :key="index" :lat-lng="item" :icon="isMarkerSelected(item,index)" @click="go(item,index)">
+        </l-marker>
         <!-- radius -->
         <l-circle v-if="MARKER_LAT_LNG !== null" :lat-lng="MARKER_LAT_LNG" :radius="circleRadius" :fill="true"
             :fill-opacity="0.1" :color="'#1919FF'" :weight="0.5" style="cursor: move"></l-circle>
@@ -25,7 +23,7 @@
 </template>
   
 <script >
-import { defineComponent } from 'vue';
+import { defineComponent, onMounted, onBeforeUnmount, ref } from 'vue';
 import { IonModal, IonContent, IonHeader, IonPage, IonTitle, IonToolbar, IonItem, IonInput, IonButton, useIonRouter, IonIcon, } from '@ionic/vue';
 import "leaflet/dist/leaflet.css";
 import { LMap, LTileLayer, LMarker, LIcon, LCircle, LTooltip, LPopup, LControlZoom } from "@vue-leaflet/vue-leaflet";
@@ -37,6 +35,8 @@ import deliveryMarker from '@/assets/markers/deliveryMarker2.png';
 import ProductCustomerViewDialog from "@/views/modal/ProductCustomerViewDialog.vue";
 import CartDialog from "@/views/modal/CartDialog.vue";
 import { cart, time, alert } from 'ionicons/icons';
+import selectedMarker from '@/assets/markers/selectedMarker.png';
+
 
 export default defineComponent({
     components: {
@@ -112,7 +112,7 @@ export default defineComponent({
             handler(val) {
                 this.center = this.CENTER;
                 this.zoom = this.ZOOM;
-
+                // this.$refs.mapRef.mapObject.setView(this.center, this.zoom);
             },
         },
 
@@ -136,6 +136,9 @@ export default defineComponent({
     },
 
     methods: {
+        isMarkerSelected(marker,index) {
+            return index === this.pin ? this.selectedMarker : this.sellerMarker
+        },
         checkData(data) {
             console.log(data)
         },
@@ -144,8 +147,8 @@ export default defineComponent({
             //     console.log(this.CART)
             // });
         },
-        async go(item) {
-            console.log('go')
+        async go(item,index) {
+            this.pin = index;
             const buttonRef = this.$refs.myButton;
             if (buttonRef) {
                 // Programmatically trigger a click on the native HTML button
@@ -186,6 +189,14 @@ export default defineComponent({
     data() {
         return {
             cart,
+            pin: null,
+            selectedMarker: L.icon({
+                iconUrl: selectedMarker,
+                iconSize: [25, 41],
+                iconAnchor: [10, 41],
+                popupAnchor: [1, -34],
+                tooltipAnchor: [16, -28],
+            }),
             googleStreets: {
                 url: 'http://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}',
                 maxZoom: 20,
@@ -219,6 +230,41 @@ export default defineComponent({
             markerLatLng: [35.6769883, 139.7588499],
             circleRadius: 50 * 3,
 
+        };
+    },
+
+    // beforeDestroy(){
+    //     console.log('before destroy')
+    // }
+
+    // async mounted() {
+
+    //     // await new Promise((resolve) => setTimeout(resolve, 3000));
+    //     // this.lmapShow = false
+    //     // console.log(this.$refs.mapRef)
+    //     // const map = this.$refs.mapRef.mapObject; // Accessing the Leaflet map instance
+    //     // // map.remove(); // Destroy the Leaflet map
+    //     // this.$refs.mapRef.mapObject = null;
+    // },
+    // destroyed(){
+    //     console.log('destroy')
+    //     this.lmapShow = false
+    // },
+
+    setup() {
+        const lmapShow = ref(true);
+        // onMounted(() => {
+        //     // Initialize the Leaflet map here if needed
+        //     console.log('mounted')
+        // });
+
+        onBeforeUnmount(() => {
+            // console.log('before unmounted')
+            // lmapShow.value = false
+        });
+
+        return {
+            lmapShow
         };
     },
 

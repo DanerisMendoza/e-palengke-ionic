@@ -38,7 +38,6 @@ const currentRouteName = computed(() => currentRoute.name);
 const logout = () => {
   localStorage.setItem('e-palengke-token', '');
   router.replace({ name: 'LOGIN' });
-  // window.location.reload()
 }
 
 const SIDE_NAV = computed(() => store.getters.SIDE_NAV);
@@ -53,7 +52,7 @@ const GetUserDetails = async () => {
   })
 }
 
-watch(() => currentRouteName.value, (newRoute, oldRoute) => { 
+watch(() => currentRouteName.value, (newRoute, oldRoute) => {
   if (newRoute != 'LOGIN') {
     GetAllSideNav();
     GetUserDetails();
@@ -61,16 +60,11 @@ watch(() => currentRouteName.value, (newRoute, oldRoute) => {
 });
 
 if (currentRouteName.value != 'LOGIN') {
-    GetAllSideNav();
-    GetUserDetails();
-  }
+  GetAllSideNav();
+  GetUserDetails();
+}
 
-const navigateTo = (item: any) => {
-  if (item.side_nav_children && item.side_nav_children.length > 0) {
-    // Handle dropdown logic if needed
-  } else {
-    // close the menu here
-    router.replace({ name: item.name });
-  }
+const navigateTo = async (item: any) => {
+    await router.replace({ name: item.name });
 };
 </script>
