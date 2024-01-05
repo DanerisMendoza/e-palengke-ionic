@@ -4,6 +4,7 @@ import login from '../views/modules/login.vue';
 import home from '../views/modules/home.vue';
 import store from '../views/modules/store.vue';
 import TEST from '../views/modules/test.vue';
+import TESTCAMERA from '../views/modules/TESTCAMERA.vue';
 import user from '@/api/modules/users/index'
 
 const routes: Array<RouteRecordRaw> = [
@@ -15,25 +16,31 @@ const routes: Array<RouteRecordRaw> = [
     path: '/LOGIN',
     name: 'LOGIN',
     component: login,
-    meta: { requiresAuth: false }, // add this meta field for non-protected routes
+    meta: { requiresAuth: false },
   },
   {
     path: '/HOME',
     name: 'HOME',
     component: home,
-    meta: { requiresAuth: true }, // add this meta field for protected routes
+    meta: { requiresAuth: true }, 
   },
   {
     path: '/STORE',
     name: 'STORE',
     component: store,
-    meta: { requiresAuth: true }, // add this meta field for protected routes
+    meta: { requiresAuth: true },
   },
   {
     path: '/TEST',
     name: 'TEST',
     component: TEST,
-    meta: { requiresAuth: true }, // add this meta field for protected routes
+    meta: { requiresAuth: true }, 
+  },
+  {
+    path: '/TESTCAMERA',
+    name: 'TESTCAMERA',
+    component: TESTCAMERA,
+    meta: { requiresAuth: null }, 
   },
 ];
 
@@ -65,13 +72,16 @@ router.beforeEach((to, from, next) => {
       }
     }
     // not log in block
-    else {
+    else if(to.matched.some((record) => record.meta.requiresAuth == false)) {
       if(isAuthenticated || isAlreadyLoggedIn){
         next({name: 'HOME'});
       }
       else{
         next();
       }
+    }
+    else{
+      next();
     }
   });
 });
