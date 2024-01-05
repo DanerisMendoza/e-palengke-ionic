@@ -14,6 +14,7 @@
             {{ item.name }}
           </ion-item>
           <ion-item @click="navigateTo({name:'TESTCAMERA'})">TEST-CAMERA</ion-item>
+          <ion-item @click="navigateTo({name:'TESTGPS'})">TEST-GPS</ion-item>
           <ion-item @click="logout">Logout</ion-item>
         </ion-menu-toggle>
       </ion-list>
@@ -66,7 +67,6 @@ if (currentRouteName.value != 'LOGIN') {
 }
 
 const navigateTo = async (item: any) => {
-  console.log(item.name)
     await router.replace({ name: item.name });
 };
 </script>

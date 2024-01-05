@@ -1,11 +1,13 @@
 <template>
+    <!-- store components -->
     <ProductCustomerViewDialog v-if="sidenavViewer === 'store'" />
     <ion-button v-if="sidenavViewer === 'store'" ref="myButton" id="open-modal" expand="block"
         v-show="isButtonVisible"></ion-button>
-    <CartDialog />
+    <CartDialog  v-if="sidenavViewer === 'store'"/>
     <ion-button v-if="sidenavViewer === 'store'" id="CartButton" color="light" class="buttons" @click="viewCart">
         <ion-icon color="primary" :icon="cart"></ion-icon>
     </ion-button>
+    <!-- leaflet map -->
     <l-map ref="mapRef" :zoom="zoom" :center="center" id="leafletMap" v-if="lmapShow">
         <!-- <l-tile-layer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" name="OpenStreetMap"></l-tile-layer> -->
         <l-tile-layer :url="googleStreets.url" :maxZoom="googleStreets.maxZoom"
@@ -79,7 +81,7 @@ export default defineComponent({
         ]),
 
         computedMarker() {
-            if (this.sidenavViewer === 'store') {
+            if (this.sidenavViewer === 'store' || this.sidenavViewer === 'testgps') {
                 return this.personMarker
             }
             else if (this.sidenavViewer === 'application') {

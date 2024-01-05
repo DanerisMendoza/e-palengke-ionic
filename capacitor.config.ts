@@ -5,7 +5,7 @@ const config: CapacitorConfig = {
   appName: 'e-palengke',
   webDir: 'dist',
   server: {
-    androidScheme: 'https'
+    androidScheme: 'http'
   },
   // plugins: {
   //   SplashScreen: {

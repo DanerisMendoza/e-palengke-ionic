@@ -5,6 +5,7 @@ import home from '../views/modules/home.vue';
 import store from '../views/modules/store.vue';
 import TEST from '../views/modules/test.vue';
 import TESTCAMERA from '../views/modules/TESTCAMERA.vue';
+import TESTGPS from '../views/modules/TESTGPS.vue';
 import user from '@/api/modules/users/index'
 
 const routes: Array<RouteRecordRaw> = [
@@ -40,6 +41,12 @@ const routes: Array<RouteRecordRaw> = [
     path: '/TESTCAMERA',
     name: 'TESTCAMERA',
     component: TESTCAMERA,
+    meta: { requiresAuth: null }, 
+  },
+  {
+    path: '/TESTGPS',
+    name: 'TESTGPS',
+    component: TESTGPS,
     meta: { requiresAuth: null }, 
   },
 ];
