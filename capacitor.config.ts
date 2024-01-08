@@ -1,13 +1,13 @@
 import { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
-  appId: 'io.ionic.starter',
+  appId: 'com.epal',
   appName: 'e-palengke',
   webDir: 'dist',
   server: {
     androidScheme: 'http'
   },
-  // plugins: {
+  plugins: {
   //   SplashScreen: {
   //     launchShowDuration: 3000,
   //     launchAutoHide: true,
@@ -24,7 +24,10 @@ const config: CapacitorConfig = {
   //     layoutName: "launch_screen",
   //     useDialog: true,
   //   },
-  // },
+    PushNotifications:{
+      presentationOptions: ["badge","sound","alert"],
+    }
+  },
 };
 
 export default config;

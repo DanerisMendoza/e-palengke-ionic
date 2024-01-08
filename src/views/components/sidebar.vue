@@ -15,6 +15,7 @@
           </ion-item>
           <ion-item @click="navigateTo({name:'TESTCAMERA'})">TEST-CAMERA</ion-item>
           <ion-item @click="navigateTo({name:'TESTGPS'})">TEST-GPS</ion-item>
+          <ion-item @click="navigateTo({name:'TESTPUSHNOTIF'})">TEST-PUSH-NOTIFICATION</ion-item>
           <ion-item @click="logout">Logout</ion-item>
         </ion-menu-toggle>
       </ion-list>

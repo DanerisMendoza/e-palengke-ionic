@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "361219475004",
+    "project_id": "epalengke-d83c1",
+    "storage_bucket": "epalengke-d83c1.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:361219475004:android:1a3b382957a6d7a2326539",
+        "android_client_info": {
+          "package_name": "com.epal"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD-N4nvfmTRWBUEfjg5chismAq9y1kRHUg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

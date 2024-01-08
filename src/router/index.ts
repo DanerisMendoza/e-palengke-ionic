@@ -6,6 +6,7 @@ import store from '../views/modules/store.vue';
 import TEST from '../views/modules/test.vue';
 import TESTCAMERA from '../views/modules/TESTCAMERA.vue';
 import TESTGPS from '../views/modules/TESTGPS.vue';
+import TESTPUSHNOTIFICATION from '../views/modules/TESTPUSHNOTIFICATION.vue';
 import user from '@/api/modules/users/index'
 
 const routes: Array<RouteRecordRaw> = [
@@ -47,6 +48,12 @@ const routes: Array<RouteRecordRaw> = [
     path: '/TESTGPS',
     name: 'TESTGPS',
     component: TESTGPS,
+    meta: { requiresAuth: null }, 
+  },
+  {
+    path: '/TESTPUSHNOTIF',
+    name: 'TESTPUSHNOTIF',
+    component: TESTPUSHNOTIFICATION,
     meta: { requiresAuth: null }, 
   },
 ];
