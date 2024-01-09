@@ -106,5 +106,15 @@ export default {
       })
     },
 
+    UpdateDeviceToken({ commit }, payload) {
+      return new Promise((resolve, reject) => {
+        api.post('api/UpdateDeviceToken', payload).then((response) => {
+          resolve(response.data)
+        }).catch((error) => {
+          reject(error)
+        });
+      })
+    },
+
   }
 }

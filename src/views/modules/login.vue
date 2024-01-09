@@ -23,16 +23,19 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { onMounted, ref } from 'vue';
 import { IonContent, IonHeader, IonPage, IonTitle, IonToolbar, IonItem, IonInput, IonButton, useIonRouter } from '@ionic/vue';
 import { useStore } from 'vuex';
 import { alertController } from '@ionic/vue';
 import { useRoute, useRouter } from 'vue-router';
+import { PushNotifications } from '@capacitor/push-notifications';
+import { Toast } from '@capacitor/toast';
 
 const store = useStore();
 const router = useRouter();
 const username = ref('');
 const password = ref('');
+let device_token = ref('');
 const ionRouter = useIonRouter();
 
 
@@ -49,6 +52,8 @@ const login = async () => {
       localStorage.setItem('e-palengke-token', response.token);
       await store.dispatch('GetSideNav').then((response) => {
         ionRouter.replace('/' + response[0].name);
+        const payload = { device_token: device_token.value }
+        store.dispatch('UpdateDeviceToken', payload)
       });
     } else if (response.message === 'not active') {
       const alert = await alertController.create({
@@ -70,6 +75,49 @@ const login = async () => {
     console.error(error);
   }
 };
+
+onMounted(async () => {
+  const addListeners = async () => {
+    await PushNotifications.addListener('registration', token => {
+      device_token.value = token.value
+      // console.info('Registration token: ', token.value);
+      // Toast.show({text: 'Registration tokenn: '+token.value});
+    });
+
+    await PushNotifications.addListener('registrationError', err => {
+      console.error('Registration error: ', err.error);
+    });
+
+    await PushNotifications.addListener('pushNotificationReceived', notification => {
+      console.log('Push notification received: ', notification);
+    });
+
+    await PushNotifications.addListener('pushNotificationActionPerformed', notification => {
+      console.log('Push notification action performed', notification.actionId, notification.inputValue);
+    });
+  }
+  addListeners()
+  const registerNotifications = async () => {
+    let permStatus = await PushNotifications.checkPermissions();
+
+    if (permStatus.receive === 'prompt') {
+      permStatus = await PushNotifications.requestPermissions();
+    }
+
+    if (permStatus.receive !== 'granted') {
+      throw new Error('User denied permissions!');
+    }
+
+    await PushNotifications.register();
+  }
+
+  const getDeliveredNotifications = async () => {
+    const notificationList = await PushNotifications.getDeliveredNotifications();
+    console.log('delivered notifications', notificationList);
+  }
+
+  registerNotifications()
+});
 </script>
 
 <style scoped>

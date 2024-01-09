@@ -7,15 +7,15 @@
     </ion-header>
     <ion-content>
       <ion-list>
-        <ion-menu-toggle >
+        <ion-menu-toggle>
           <ion-item v-for="(item, index) in SIDE_NAV" :key="index" @click="navigateTo(item)">
             <!-- Use ion-icon if you have an icon property in your 'item' object -->
             <!-- <ion-icon slot="start" :icon="item.icon"></ion-icon> -->
             {{ item.name }}
           </ion-item>
-          <ion-item @click="navigateTo({name:'TESTCAMERA'})">TEST-CAMERA</ion-item>
-          <ion-item @click="navigateTo({name:'TESTGPS'})">TEST-GPS</ion-item>
-          <ion-item @click="navigateTo({name:'TESTPUSHNOTIF'})">TEST-PUSH-NOTIFICATION</ion-item>
+          <ion-item @click="navigateTo({ name: 'TESTCAMERA' })">TEST-CAMERA</ion-item>
+          <ion-item @click="navigateTo({ name: 'TESTGPS' })">TEST-GPS</ion-item>
+          <ion-item @click="navigateTo({ name: 'TESTPUSHNOTIF' })">TEST-PUSH-NOTIFICATION</ion-item>
           <ion-item @click="logout">Logout</ion-item>
         </ion-menu-toggle>
       </ion-list>
@@ -38,9 +38,12 @@ const store = useStore();
 const USER_DETAILS = computed(() => store.getters.USER_DETAILS);
 const currentRouteName = computed(() => currentRoute.name);
 
-const logout = () => {
-  localStorage.setItem('e-palengke-token', '');
-  router.replace({ name: 'LOGIN' });
+const logout = async() => {
+  const payload = { device_token: '' }
+  await store.dispatch('UpdateDeviceToken', payload).then(()=>{
+    localStorage.setItem('e-palengke-token', '');
+    router.replace({ name: 'LOGIN' });
+  })
 }
 
 const SIDE_NAV = computed(() => store.getters.SIDE_NAV);
@@ -68,6 +71,6 @@ if (currentRouteName.value != 'LOGIN') {
 }
 
 const navigateTo = async (item: any) => {
-    await router.replace({ name: item.name });
+  await router.replace({ name: item.name });
 };
 </script>
