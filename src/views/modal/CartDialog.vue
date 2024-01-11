@@ -35,12 +35,16 @@
                                     </ion-row>
                                     <ion-row>
                                         <ion-col size="1"></ion-col>
-                                        <ion-col size="3.4"><ion-button fill="outline" color="dark"
-                                                @click="deacreaseQuantity(item)"><strong>-</strong></ion-button></ion-col>
-                                        <ion-col size="3.8"><ion-button fill="outline" color="dark"><strong>{{ item.quantity
-                                        }}</strong></ion-button></ion-col>
-                                        <ion-col size="2"><ion-button fill="outline" color="dark"
-                                                @click="increaseQuantity(item)"><strong>+</strong></ion-button></ion-col>
+                                        <ion-col size="11">
+                                            <ion-tab-bar>
+                                                <ion-button size="small" fill="outline" color="dark"
+                                                    @click="deacreaseQuantity(item)"><strong>-</strong></ion-button>
+                                                <ion-button size="small" fill="outline" color="dark"><strong>{{
+                                                    item.quantity }}</strong></ion-button>
+                                                <ion-button size="small" fill="outline" color="dark"
+                                                    @click="increaseQuantity(item)"><strong>+</strong></ion-button>
+                                            </ion-tab-bar>
+                                        </ion-col>
                                     </ion-row>
                                 </ion-col>
                             </ion-row>
@@ -70,7 +74,7 @@
 </template>
 
 <script  >
-import { IonCheckbox, IonItemDivider, IonFooter, IonCol, IonGrid, IonRow, IonHeader, IonToolbar, IonButtons, IonTitle, IonInput, IonCard, IonCardHeader, IonCardTitle, IonCardSubtitle, IonCardContent, IonButton, IonModal, IonContent, IonIcon, IonItem, IonList, IonImg, IonLabel, IonSearchbar, IonChip, IonAccordion, IonAccordionGroup } from '@ionic/vue';
+import { IonTabs, IonTabBar, IonTabButton, IonCheckbox, IonItemDivider, IonFooter, IonCol, IonGrid, IonRow, IonHeader, IonToolbar, IonButtons, IonTitle, IonInput, IonCard, IonCardHeader, IonCardTitle, IonCardSubtitle, IonCardContent, IonButton, IonModal, IonContent, IonIcon, IonItem, IonList, IonImg, IonLabel, IonSearchbar, IonChip, IonAccordion, IonAccordionGroup } from '@ionic/vue';
 import { ref, onMounted, defineComponent } from 'vue';
 import { mapGetters } from "vuex";
 import { arrowBack, cart, time, alert } from 'ionicons/icons';
@@ -78,7 +82,7 @@ import { alertController } from '@ionic/vue';
 
 export default defineComponent({
     components: {
-        IonCheckbox, IonItemDivider, IonIcon, IonFooter, IonCol, IonGrid, IonRow, IonHeader, IonToolbar, IonButtons, IonTitle, IonInput, IonCard, IonCardHeader, IonCardTitle, IonCardSubtitle, IonCardContent, IonButton, IonModal, IonContent, IonIcon, IonItem, IonList, IonImg, IonLabel, IonSearchbar, IonChip, IonAccordion, IonAccordionGroup
+        IonTabs, IonTabBar, IonTabButton, IonCheckbox, IonItemDivider, IonIcon, IonFooter, IonCol, IonGrid, IonRow, IonHeader, IonToolbar, IonButtons, IonTitle, IonInput, IonCard, IonCardHeader, IonCardTitle, IonCardSubtitle, IonCardContent, IonButton, IonModal, IonContent, IonIcon, IonItem, IonList, IonImg, IonLabel, IonSearchbar, IonChip, IonAccordion, IonAccordionGroup
     },
     methods: {
         itemIsCheck() {
