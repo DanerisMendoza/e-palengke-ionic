@@ -1,7 +1,7 @@
 <template>
     <ion-modal ref="modal" trigger="CartButton" @willPresent="onPresent">
         <ion-header>
-            <ion-toolbar>
+            <ion-toolbar  color="primary">
                 <ion-button @click="cancel()" fill="clear" slot="start">
                     <ion-icon :icon="arrowBack" color="dark"></ion-icon>
                 </ion-button>
@@ -89,8 +89,18 @@ export default defineComponent({
             // console.log(this.CART)
         },
         selectAll() {
-            // this.all = !this.all
-            // console.log(this.all)
+            let checkAllCart = this.CART
+            if(this.all){
+                checkAllCart.forEach(item=>{
+                    item.isCheck = true
+                })
+            }
+            else{
+                checkAllCart.forEach(item=>{
+                    item.isCheck = false
+                })
+            }
+            this.$store.commit('CART', checkAllCart);
         },
         async increaseQuantity(item) {
             if (item.stock > 0) {
