@@ -5,8 +5,8 @@
             <mapComp :sidenavViewer="'store'" />
         </ion-content>
         <ion-footer>
-            <ion-toolbar>
-                <ion-range v-model="circleRadius" aria-label="Volume" mode="ios"></ion-range>
+            <ion-toolbar color="default">
+                <ion-range v-model="circleRadius" aria-label="Volume" mode="ios" ></ion-range>
             </ion-toolbar>
         </ion-footer>
     </ion-page>

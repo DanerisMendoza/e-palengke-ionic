@@ -30,6 +30,7 @@ import { alertController } from '@ionic/vue';
 import { useRoute, useRouter } from 'vue-router';
 import { PushNotifications } from '@capacitor/push-notifications';
 import { Toast } from '@capacitor/toast';
+import { isPlatform } from '@ionic/vue';
 
 const store = useStore();
 const router = useRouter();
@@ -52,8 +53,10 @@ const login = async () => {
       localStorage.setItem('e-palengke-token', response.token);
       await store.dispatch('GetSideNav').then((response) => {
         ionRouter.replace('/' + response[0].name);
-        const payload = { device_token: device_token.value }
-        store.dispatch('UpdateDeviceToken', payload)
+        if (device_token.value != '') {
+          const payload = { device_token: device_token.value }
+          store.dispatch('UpdateDeviceToken', payload)
+        }
       });
     } else if (response.message === 'not active') {
       const alert = await alertController.create({
@@ -76,7 +79,7 @@ const login = async () => {
   }
 };
 
-onMounted(async () => {
+if (isPlatform('capacitor')) { // Check if the platform is not web
   const addListeners = async () => {
     await PushNotifications.addListener('registration', token => {
       device_token.value = token.value
@@ -110,14 +113,8 @@ onMounted(async () => {
 
     await PushNotifications.register();
   }
-
-  const getDeliveredNotifications = async () => {
-    const notificationList = await PushNotifications.getDeliveredNotifications();
-    console.log('delivered notifications', notificationList);
-  }
-
   registerNotifications()
-});
+}
 </script>
 
 <style scoped>

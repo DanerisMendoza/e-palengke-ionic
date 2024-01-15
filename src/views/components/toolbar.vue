@@ -1,6 +1,6 @@
 <template>
     <ion-header>
-        <ion-toolbar>
+        <ion-toolbar color="primary">
             <ion-buttons slot="start">
                 <ion-menu-toggle>
                     <ion-button>

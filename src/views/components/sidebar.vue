@@ -1,22 +1,36 @@
 <template>
-  <ion-menu ref="menu" content-id="main-content">
+  <ion-menu content-id="main-content">
     <ion-header>
-      <ion-toolbar>
-        <ion-title>E-palengke</ion-title>
+      <ion-toolbar color="primary">
+        <ion-title>E-PALENGKE</ion-title>
       </ion-toolbar>
     </ion-header>
     <ion-content>
       <ion-list>
         <ion-menu-toggle>
-          <ion-item v-for="(item, index) in SIDE_NAV" :key="index" @click="navigateTo(item)">
-            <!-- Use ion-icon if you have an icon property in your 'item' object -->
-            <!-- <ion-icon slot="start" :icon="item.icon"></ion-icon> -->
-            {{ item.name }}
-          </ion-item>
-          <ion-item @click="navigateTo({ name: 'TESTCAMERA' })">TEST-CAMERA</ion-item>
+          <ion-item @click="navigateTo({ name: 'HOME' })"><ion-icon slot="start"
+              :icon="personCircle"></ion-icon>HOME</ion-item>
+          <ion-item @click="navigateTo({ name: 'STORE' })"><ion-icon slot="start"
+              :icon="storefront"></ion-icon>STORE</ion-item>
+        </ion-menu-toggle>
+        <ion-accordion-group>
+          <ion-accordion value="first">
+            <ion-item slot="header">
+              <ion-icon slot="start" :icon="cart"></ion-icon><ion-label>ORDERS</ion-label>
+            </ion-item>
+            <ion-item v-if="USER_DETAILS.isSeller" style="padding-left: 40px;" slot="content" @click="navigateTo({ name: 'STORE' })"><ion-icon
+                slot="start" :icon="returnDownForwardOutline"></ion-icon>STORE</ion-item>
+            <ion-item style="padding-left: 40px;" slot="content" @click="navigateTo({ name: 'CUSTOMER' })"><ion-icon
+                slot="start" :icon="returnDownForwardOutline"></ion-icon>CUSTOMER</ion-item>
+            <ion-item v-if="USER_DETAILS.isDelivery" style="padding-left: 40px;" slot="content" @click="navigateTo({ name: 'DELIVERY' })"><ion-icon
+                slot="start" :icon="returnDownForwardOutline"></ion-icon>DELIVERY</ion-item>
+          </ion-accordion>
+        </ion-accordion-group>
+        <ion-menu-toggle>
+          <!-- <ion-item @click="navigateTo({ name: 'TESTCAMERA' })">TEST-CAMERA</ion-item>
           <ion-item @click="navigateTo({ name: 'TESTGPS' })">TEST-GPS</ion-item>
-          <ion-item @click="navigateTo({ name: 'TESTPUSHNOTIF' })">TEST-PUSH-NOTIFICATION</ion-item>
-          <ion-item @click="logout">Logout</ion-item>
+          <ion-item @click="navigateTo({ name: 'TESTPUSHNOTIF' })">TEST-PUSH-NOTIFICATION</ion-item> -->
+          <ion-item @click="logout"><ion-icon slot="start" :icon="logOutOutline"></ion-icon>Logout</ion-item>
         </ion-menu-toggle>
       </ion-list>
     </ion-content>
@@ -25,25 +39,73 @@
   
 
 <script setup lang="ts">
-import { IonRouterOutlet, IonButtons, IonContent, IonHeader, IonMenu, IonMenuButton, IonPage, IonTitle, IonToolbar, IonMenuToggle, IonItem, IonList } from '@ionic/vue';
+import { IonIcon, IonLabel, IonAccordion, IonAccordionGroup, IonRouterOutlet, IonButtons, IonContent, IonHeader, IonMenu, IonMenuButton, IonPage, IonTitle, IonToolbar, IonMenuToggle, IonItem, IonList } from '@ionic/vue';
+import { returnDownForwardOutline, logOutOutline, cart, personCircle, storefront } from 'ionicons/icons';
 import { useStore } from 'vuex';
 import { useRoute, useRouter } from 'vue-router';
 import { computed, ref } from 'vue';
 import { watch, onBeforeUnmount } from 'vue';
-
+import { PushNotifications } from '@capacitor/push-notifications';
+import { Toast } from '@capacitor/toast';
 
 const router = useRouter();
 const currentRoute = useRoute();
 const store = useStore();
 const USER_DETAILS = computed(() => store.getters.USER_DETAILS);
 const currentRouteName = computed(() => currentRoute.name);
+let device_token = ref('');
+import { isPlatform } from '@ionic/vue';
 
-const logout = async() => {
-  const payload = { device_token: '' }
-  await store.dispatch('UpdateDeviceToken', payload).then(()=>{
+const logout = async () => {
+  if (device_token.value != '') {
+    const payload = { device_token: '' }
+    await store.dispatch('UpdateDeviceToken', payload).then(() => {
+      localStorage.setItem('e-palengke-token', '');
+      router.replace({ name: 'LOGIN' });
+    })
+  }
+  else {
     localStorage.setItem('e-palengke-token', '');
     router.replace({ name: 'LOGIN' });
-  })
+  }
+}
+
+const getDeviceToken = async () => {
+  const addListeners = async () => {
+    await PushNotifications.addListener('registration', token => {
+      device_token.value = token.value
+    });
+
+    await PushNotifications.addListener('registrationError', err => {
+      console.error('Registration error: ', err.error);
+    });
+
+    await PushNotifications.addListener('pushNotificationReceived', notification => {
+      console.log('Push notification received: ', notification);
+    });
+
+    await PushNotifications.addListener('pushNotificationActionPerformed', notification => {
+      console.log('Push notification action performed', notification.actionId, notification.inputValue);
+    });
+  }
+  addListeners()
+  const registerNotifications = async () => {
+    let permStatus = await PushNotifications.checkPermissions();
+
+    if (permStatus.receive === 'prompt') {
+      permStatus = await PushNotifications.requestPermissions();
+    }
+
+    if (permStatus.receive !== 'granted') {
+      throw new Error('User denied permissions!');
+    }
+
+    await PushNotifications.register();
+  }
+  registerNotifications()
+}
+if (isPlatform('capacitor')) {
+  getDeviceToken()
 }
 
 const SIDE_NAV = computed(() => store.getters.SIDE_NAV);
@@ -53,7 +115,7 @@ const GetAllSideNav = async () => {
 }
 const GetUserDetails = async () => {
   await store.dispatch('GetUserDetails').then(() => {
-    // console.log(USER_DETAILS)
+    console.log(USER_DETAILS)
     store.commit('PROFILE_PATH', USER_DETAILS.value.base64img == null ? require("../../assets/sample.jpg") : USER_DETAILS.value.base64img)
   })
 }
@@ -71,6 +133,10 @@ if (currentRouteName.value != 'LOGIN') {
 }
 
 const navigateTo = async (item: any) => {
+  const menuController = document.querySelector('ion-menu');
+  if (menuController) {
+    await menuController.close();
+  }
   await router.replace({ name: item.name });
 };
 </script>
