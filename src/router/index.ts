@@ -7,6 +7,8 @@ import TEST from '../views/modules/test.vue';
 import TESTCAMERA from '../views/modules/TESTCAMERA.vue';
 import TESTGPS from '../views/modules/TESTGPS.vue';
 import TESTPUSHNOTIFICATION from '../views/modules/TESTPUSHNOTIFICATION.vue';
+import CustomerOrders from '../views/modules/children/CustomerOrders.vue';
+import StoreOrders from '../views/modules/children/StoreOrders.vue';
 import user from '@/api/modules/users/index'
 
 const routes: Array<RouteRecordRaw> = [
@@ -30,6 +32,18 @@ const routes: Array<RouteRecordRaw> = [
     path: '/STORE',
     name: 'STORE',
     component: store,
+    meta: { requiresAuth: true },
+  },
+  {
+    path: '/CUSTOMER%20ORDERS',
+    name: 'CUSTOMER ORDERS',
+    component: CustomerOrders,
+    meta: { requiresAuth: true },
+  },
+  {
+    path: '/STORE%20ORDERS',
+    name: 'STORE ORDERS',
+    component: StoreOrders,
     meta: { requiresAuth: true },
   },
   {

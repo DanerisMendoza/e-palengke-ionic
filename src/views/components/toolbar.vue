@@ -9,7 +9,7 @@
                 </ion-menu-toggle>
             </ion-buttons>
             <ion-title slot="start">{{ $route.name }}</ion-title>
-            <p slot="end">{{ USER_DETAILS.first_name }}</p>
+            <!-- <p slot="end">{{ USER_DETAILS.first_name }}</p> -->
             <img :src="PROFILE_PATH" slot="end" alt="" width="50"  />
         </ion-toolbar>
     </ion-header>

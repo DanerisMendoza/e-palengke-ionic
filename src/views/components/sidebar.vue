@@ -18,9 +18,9 @@
             <ion-item slot="header">
               <ion-icon slot="start" :icon="cart"></ion-icon><ion-label>ORDERS</ion-label>
             </ion-item>
-            <ion-item v-if="USER_DETAILS.isSeller" style="padding-left: 40px;" slot="content" @click="navigateTo({ name: 'STORE' })"><ion-icon
+            <ion-item v-if="USER_DETAILS.isSeller" style="padding-left: 40px;" slot="content" @click="navigateTo({ name: 'STORE ORDERS' })"><ion-icon
                 slot="start" :icon="returnDownForwardOutline"></ion-icon>STORE</ion-item>
-            <ion-item style="padding-left: 40px;" slot="content" @click="navigateTo({ name: 'CUSTOMER' })"><ion-icon
+            <ion-item style="padding-left: 40px;" slot="content" @click="navigateTo({ name: 'CUSTOMER ORDERS' })"><ion-icon
                 slot="start" :icon="returnDownForwardOutline"></ion-icon>CUSTOMER</ion-item>
             <ion-item v-if="USER_DETAILS.isDelivery" style="padding-left: 40px;" slot="content" @click="navigateTo({ name: 'DELIVERY' })"><ion-icon
                 slot="start" :icon="returnDownForwardOutline"></ion-icon>DELIVERY</ion-item>

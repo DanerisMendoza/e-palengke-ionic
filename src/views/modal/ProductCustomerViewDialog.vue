@@ -1,5 +1,6 @@
 <template>
-    <ion-modal ref="modal" trigger="open-modal" :initial-breakpoint="0.44" :breakpoints="[0, 0.44, 1]" @willPresent="onPresent">
+    <ion-modal ref="modal" trigger="open-modal" :initial-breakpoint="0.44" :breakpoints="[0, 0.44, 1]"
+        @willPresent="onPresent">
         <ion-content class="ion-padding">
             <ion-list>
                 <ion-item>
@@ -55,7 +56,7 @@
                     <swiper-slide v-for="(item, index) in PRODUCT">
                         <ion-card>
                             <ion-card-content>
-                                <img :src="item.base64img" alt="" style="height: 300px; width: 300px; object-fit: cover;"/>
+                                <img :src="item.base64img" alt="" style="height: 300px; width: 300px; object-fit: cover;" />
                             </ion-card-content>
                             <ion-card-header>
                                 <ion-card-title> {{ item.name }}</ion-card-title>
@@ -63,9 +64,13 @@
                             <ion-card-subtitle>Price: ₱{{ item.price }}</ion-card-subtitle>
                             <ion-card-subtitle>Stock: {{ item.stock }}</ion-card-subtitle>
 
-                            <ion-button v-if="item.stock > 0" shape="round" fill="solid" color="dark" class="ion-margin" @click="addToCart(item)">
+                            <ion-button v-if="item.stock > 0 && store_id !== item.store_id" shape="round" fill="solid" color="dark" class="ion-margin"
+                                @click="addToCart(item)">
                                 <ion-icon slot="start" :icon="cart"></ion-icon>
                                 Add To Cart
+                            </ion-button>
+                            <ion-button v-else-if="store_id === item.store_id" shape="round" fill="solid" color="light" class="ion-margin" >
+                               
                             </ion-button>
                             <ion-button v-else shape="round" fill="solid" color="light" class="ion-margin" >
                                 <ion-icon slot="end" :icon="alert"></ion-icon>
@@ -98,11 +103,18 @@ import { watch } from 'vue';
 import { cart, time, alert } from 'ionicons/icons';
 import { alertController } from '@ionic/vue';
 
+onMounted(() => {
+ 
+})
+
 const store = useStore();
 const SELECTED_STORE = computed(() => store.getters.SELECTED_STORE);
 const PRODUCT = computed(() => store.getters.PRODUCT);
+const USER_DETAILS = computed(() => store.getters.USER_DETAILS);
 
+let store_id = ref(null);
 const firstSwiper = ref(null);
+
 const onSwiper = (swiper) => {
     firstSwiper.value = swiper;
 };
@@ -111,13 +123,14 @@ const logIndex = (index) => {
     firstSwiper.value.slideTo(index);
 };
 
-const onPresent = ()=> {
+const onPresent = () => {
     store.dispatch("GET_PRODUCT_BY_ID", SELECTED_STORE.value.id)
+    store_id = USER_DETAILS.value?.user_role_details
+        ?.find((item) => item?.id === 3 && item?.status === 'active')
+        ?.store_details[0]?.store_id ?? null;
 }
 
-const addToCart = async(item) => {
-    console.log(item)
-    console.log(item.stock)
+const addToCart = async (item) => {
     if (item.stock - 1 >= 0) {
         item.stock -= 1;
         const payload = {
