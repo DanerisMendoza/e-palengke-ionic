@@ -31,7 +31,6 @@ watch(circleRadius, (newValue, oldValue) => {
 });
 
 onIonViewWillEnter(async () => {
-    console.log('onIonViewWillEnter')
     await store.dispatch("GetUserDetails").then(async (response) => {
         //Set Leaflet Coordinates by userdetails
         const latitude = USER_DETAILS.value.customer_locations.latitude
