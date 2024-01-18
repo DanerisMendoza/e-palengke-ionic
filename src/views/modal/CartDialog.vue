@@ -3,7 +3,7 @@
         <ion-header>
             <ion-toolbar  color="primary">
                 <ion-button @click="cancel()" fill="clear" slot="start">
-                    <ion-icon :icon="arrowBack" color="dark"></ion-icon>
+                    <ion-icon :icon="arrowBack" color="light"></ion-icon>
                 </ion-button>
                 <ion-title style="text-align: center; margin-right: 2rem;">CART</ion-title>
             </ion-toolbar>

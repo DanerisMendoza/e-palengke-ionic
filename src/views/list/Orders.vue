@@ -34,7 +34,7 @@
                         </ion-list>
                     </ion-col>
                     <ion-col size="1">
-                        <ion-button>
+                        <ion-button @click="openDialog(item)">
                             <ion-icon :icon="chevronForwardOutline"></ion-icon>
                         </ion-button>
                     </ion-col>
@@ -59,6 +59,7 @@ const store = useStore();
 const ORDERS = computed(() => store.getters.ORDERS);
 let USER_DETAILS_GLOBAL: any = ref(null)
 let store_id = ref(null)
+const SELECTED_ORDER_DETAILS:any = computed(() => store.getters.SELECTED_ORDER_DETAILS);
 
 onMounted(async () => {
     await iniUserDetails()
@@ -102,5 +103,9 @@ const formatDate = (date: any) => {
     return moment(date).format('MMMM D, YYYY - hh:mm A')
 };
 
+const openDialog = (item:any)=>{
+    store.commit('SELECTED_ORDER_DETAILS',item)
+    store.commit('ORDER_DETAILS_DIALOG',true)
+}
 
 </script>

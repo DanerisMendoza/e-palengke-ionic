@@ -1,7 +1,7 @@
 <template>
   <ion-page>
     <ion-header>
-      <ion-toolbar  color="primary">
+      <ion-toolbar color="primary">
         <ion-title>Login</ion-title>
       </ion-toolbar>
     </ion-header>
@@ -39,6 +39,49 @@ const password = ref('');
 let device_token = ref('');
 const ionRouter = useIonRouter();
 
+if (isPlatform('capacitor')) {
+  const addListeners = async () => {
+    await PushNotifications.addListener('registration', token => {
+      // console.info('Registration token: ', token.value);
+      // Toast.show({text: 'token: '+token.value});
+      device_token.value = token.value
+    });
+
+    await PushNotifications.addListener('registrationError', err => {
+      console.error('Registration error: ', err.error);
+    });
+
+    await PushNotifications.addListener('pushNotificationReceived', notification => {
+      console.log('Push notification received: ', notification);
+    });
+
+    await PushNotifications.addListener('pushNotificationActionPerformed', notification => {
+      console.log('Push notification action performed', notification.actionId, notification.inputValue);
+    });
+  }
+
+  const registerNotifications = async () => {
+    let permStatus = await PushNotifications.checkPermissions();
+
+    if (permStatus.receive === 'prompt') {
+      permStatus = await PushNotifications.requestPermissions();
+    }
+
+    if (permStatus.receive !== 'granted') {
+      throw new Error('User denied permissions!');
+    }
+
+    await PushNotifications.register();
+  }
+
+  const getDeliveredNotifications = async () => {
+    const notificationList = await PushNotifications.getDeliveredNotifications();
+    console.log('delivered notifications', notificationList);
+  }
+  addListeners()
+  getDeliveredNotifications()
+  registerNotifications()
+}
 
 const login = async () => {
   try {
@@ -79,42 +122,8 @@ const login = async () => {
   }
 };
 
-if (isPlatform('capacitor')) { // Check if the platform is not web
-  const addListeners = async () => {
-    await PushNotifications.addListener('registration', token => {
-      device_token.value = token.value
-      // console.info('Registration token: ', token.value);
-      // Toast.show({text: 'Registration tokenn: '+token.value});
-    });
 
-    await PushNotifications.addListener('registrationError', err => {
-      console.error('Registration error: ', err.error);
-    });
 
-    await PushNotifications.addListener('pushNotificationReceived', notification => {
-      console.log('Push notification received: ', notification);
-    });
-
-    await PushNotifications.addListener('pushNotificationActionPerformed', notification => {
-      console.log('Push notification action performed', notification.actionId, notification.inputValue);
-    });
-  }
-  addListeners()
-  const registerNotifications = async () => {
-    let permStatus = await PushNotifications.checkPermissions();
-
-    if (permStatus.receive === 'prompt') {
-      permStatus = await PushNotifications.requestPermissions();
-    }
-
-    if (permStatus.receive !== 'granted') {
-      throw new Error('User denied permissions!');
-    }
-
-    await PushNotifications.register();
-  }
-  registerNotifications()
-}
 </script>
 
 <style scoped>

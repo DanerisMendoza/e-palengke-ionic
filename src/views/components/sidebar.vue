@@ -18,12 +18,15 @@
             <ion-item slot="header">
               <ion-icon slot="start" :icon="cart"></ion-icon><ion-label>ORDERS</ion-label>
             </ion-item>
-            <ion-item v-if="USER_DETAILS.isSeller" style="padding-left: 40px;" slot="content" @click="navigateTo({ name: 'STORE ORDERS' })"><ion-icon
-                slot="start" :icon="returnDownForwardOutline"></ion-icon>STORE</ion-item>
-            <ion-item style="padding-left: 40px;" slot="content" @click="navigateTo({ name: 'CUSTOMER ORDERS' })"><ion-icon
-                slot="start" :icon="returnDownForwardOutline"></ion-icon>CUSTOMER</ion-item>
-            <ion-item v-if="USER_DETAILS.isDelivery" style="padding-left: 40px;" slot="content" @click="navigateTo({ name: 'DELIVERY' })"><ion-icon
-                slot="start" :icon="returnDownForwardOutline"></ion-icon>DELIVERY</ion-item>
+            <ion-item v-if="USER_DETAILS.isSeller" style="padding-left: 40px;" slot="content"
+              @click="navigateTo({ name: 'STORE ORDERS' })"><ion-icon slot="start"
+                :icon="returnDownForwardOutline"></ion-icon>STORE</ion-item>
+            <ion-item style="padding-left: 40px;" slot="content"
+              @click="navigateTo({ name: 'CUSTOMER ORDERS' })"><ion-icon slot="start"
+                :icon="returnDownForwardOutline"></ion-icon>CUSTOMER</ion-item>
+            <ion-item v-if="USER_DETAILS.isDelivery" style="padding-left: 40px;" slot="content"
+              @click="navigateTo({ name: 'DELIVERY' })"><ion-icon slot="start"
+                :icon="returnDownForwardOutline"></ion-icon>DELIVERY</ion-item>
           </ion-accordion>
         </ion-accordion-group>
         <ion-menu-toggle>
@@ -70,9 +73,12 @@ const logout = async () => {
   }
 }
 
-const getDeviceToken = async () => {
+
+if (isPlatform('capacitor')) {
   const addListeners = async () => {
     await PushNotifications.addListener('registration', token => {
+      // console.info('Registration token: ', token.value);
+      // Toast.show({text: 'token: '+token.value});
       device_token.value = token.value
     });
 
@@ -86,9 +92,17 @@ const getDeviceToken = async () => {
 
     await PushNotifications.addListener('pushNotificationActionPerformed', notification => {
       console.log('Push notification action performed', notification.actionId, notification.inputValue);
+      router.replace({ name: 'STORE ORDERS' });
+      const notificationData =  (notification as any).notification.data
+      const order_id = notificationData.order_id;
+      const store_id = notificationData.store_id;
+      const SELECTED_ORDER_DETAILS = {order_id:order_id, store_id:store_id}
+      store.commit('SELECTED_ORDER_DETAILS',SELECTED_ORDER_DETAILS)
+      store.commit('ORDER_DETAILS_DIALOG',true)
+      // Toast.show({ text: 'order_id: ' + order_id });
     });
   }
-  addListeners()
+
   const registerNotifications = async () => {
     let permStatus = await PushNotifications.checkPermissions();
 
@@ -102,10 +116,14 @@ const getDeviceToken = async () => {
 
     await PushNotifications.register();
   }
+
+  const getDeliveredNotifications = async () => {
+    const notificationList = await PushNotifications.getDeliveredNotifications();
+    console.log('delivered notifications', notificationList);
+  }
+  addListeners()
+  getDeliveredNotifications()
   registerNotifications()
-}
-if (isPlatform('capacitor')) {
-  getDeviceToken()
 }
 
 const SIDE_NAV = computed(() => store.getters.SIDE_NAV);

@@ -2,6 +2,7 @@
     <ion-page>
         <Toolbar />
         <ion-content>
+            <OrderDetailsDialog/>
             <CustomerOrders :viewer="'store'"/>
         </ion-content>
     </ion-page>
@@ -12,6 +13,7 @@ import { IonButtons, IonMenuToggle, IonIcon, IonContent, IonHeader, IonPage, Ion
 import { menu, closeOutline } from 'ionicons/icons';
 import Toolbar from "../../components/toolbar.vue";
 import CustomerOrders from "../../list/Orders.vue";
+import OrderDetailsDialog from "@/views/modal/OrderDetailsDialog.vue";
 import { computed, ref, watch } from 'vue';
 import { onIonViewWillEnter } from '@ionic/vue';
 import { useStore } from 'vuex';
