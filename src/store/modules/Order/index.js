@@ -11,6 +11,8 @@ export default {
         CURRENT_TRANSACTION_ID: null,
         ORDER_STORE_LAT_LNG: [],
         ORDER_DETAILS_DIALOG: false,
+        SELECTED_ORDER_STATUS: null,
+        IS_ORDERS_CHANGE: false,
     },
 
     getters: {
@@ -23,6 +25,8 @@ export default {
         ORDERS_TABLE_MODE: (state) => state.ORDERS_TABLE_MODE,
         ORDER_STORE_LAT_LNG: (state) => state.ORDER_STORE_LAT_LNG,
         ORDER_DETAILS_DIALOG: (state) => state.ORDER_DETAILS_DIALOG,
+        SELECTED_ORDER_STATUS: (state) => state.SELECTED_ORDER_STATUS,
+        IS_ORDERS_CHANGE: (state) => state.IS_ORDERS_CHANGE,
     },
 
     mutations: {
@@ -35,6 +39,8 @@ export default {
         ORDERS_TABLE_MODE: (state, data) => { state.ORDERS_TABLE_MODE = data },
         ORDER_STORE_LAT_LNG: (state, data) => { state.ORDER_STORE_LAT_LNG = data },
         ORDER_DETAILS_DIALOG: (state, data) => { state.ORDER_DETAILS_DIALOG = data },
+        SELECTED_ORDER_STATUS: (state, data) => { state.SELECTED_ORDER_STATUS = data },
+        IS_ORDERS_CHANGE: (state, data) => { state.IS_ORDERS_CHANGE = data },
     },
 
     actions: {

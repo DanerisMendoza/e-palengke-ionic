@@ -45,21 +45,20 @@
 </template>
   
 <script setup lang="ts">
-import { onIonViewDidEnter, IonRow, IonCol, IonGrid, IonTabBar, IonCardContent, IonList, IonLabel, IonCard, IonButtons, IonMenuToggle, IonIcon, IonContent, IonHeader, IonPage, IonTitle, IonToolbar, IonItem, IonInput, IonButton, useIonRouter } from '@ionic/vue';
-import { chevronForwardOutline, menu, closeOutline } from 'ionicons/icons';
-import { onIonViewWillEnter } from '@ionic/vue';
-import Toolbar from "../components/toolbar.vue";
+import { IonRow, IonCol, IonGrid, IonCardContent, IonList, IonLabel, IonCard, IonButtons, IonMenuToggle, IonIcon, IonContent, IonHeader, IonPage, IonTitle, IonToolbar, IonItem, IonInput, IonButton, useIonRouter } from '@ionic/vue';
+import { chevronForwardOutline, } from 'ionicons/icons';
 import { useStore } from 'vuex';
-import { computed, ref, onMounted, defineComponent, inject } from 'vue';
+import { computed, ref, onMounted, watch } from 'vue';
 import moment from 'moment';
-import { mapGetters } from "vuex";
 
 const prop = defineProps(['viewer']);
 const store = useStore();
 const ORDERS = computed(() => store.getters.ORDERS);
+const IS_ORDERS_CHANGE = computed(() => store.getters.IS_ORDERS_CHANGE);
+const SELECTED_ORDER_STATUS = computed(() => store.getters.SELECTED_ORDER_STATUS);
 let USER_DETAILS_GLOBAL: any = ref(null)
 let store_id = ref(null)
-const SELECTED_ORDER_DETAILS:any = computed(() => store.getters.SELECTED_ORDER_DETAILS);
+const SELECTED_ORDER_DETAILS: any = computed(() => store.getters.SELECTED_ORDER_DETAILS);
 
 onMounted(async () => {
     await iniUserDetails()
@@ -89,6 +88,7 @@ const iniUserDetails = async () => {
 const getOrders = async () => {
     const payload = {
         params: {
+            order_status: SELECTED_ORDER_STATUS.value,
             mode: prop.viewer,
             store_id: store_id.value
         }
@@ -98,14 +98,25 @@ const getOrders = async () => {
     })
 }
 
+watch(() => SELECTED_ORDER_STATUS.value, (newVal, oldVal) => {
+    getOrders()
+});
+
+watch(() => IS_ORDERS_CHANGE.value, (newVal, oldVal) => {
+    if(newVal){
+        getOrders()
+        store.commit('IS_ORDERS_CHANGE',false)
+    }
+});
+
 
 const formatDate = (date: any) => {
     return moment(date).format('MMMM D, YYYY - hh:mm A')
 };
 
-const openDialog = (item:any)=>{
-    store.commit('SELECTED_ORDER_DETAILS',item)
-    store.commit('ORDER_DETAILS_DIALOG',true)
+const openDialog = (item: any) => {
+    store.commit('SELECTED_ORDER_DETAILS', item)
+    store.commit('ORDER_DETAILS_DIALOG', true)
 }
 
 </script>

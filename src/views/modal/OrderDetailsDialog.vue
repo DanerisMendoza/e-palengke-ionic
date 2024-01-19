@@ -26,7 +26,7 @@
                 <ion-col size="12">Price: ₱{{ item.price }}</ion-col>
               </ion-row>
               <ion-row>
-                <ion-col size="12">SubTotal: ₱{{ (item.price*item.quantity) }}</ion-col>
+                <ion-col size="12">SubTotal: ₱{{ (item.price * item.quantity) }}</ion-col>
               </ion-row>
             </ion-grid>
           </ion-list>
@@ -43,10 +43,13 @@
           </ion-row>
           <ion-row class="ion-align-items-center ">
             <ion-col size="6">
-              <ion-button :strong="true" fill="solid" color="danger">Decline Order</ion-button>
+              <ion-button v-if="SELECTED_ORDER_DETAILS.status == 'Pending'" :strong="true" fill="solid" color="danger" @click="DECLINE_ORDER">Decline Order</ion-button>
             </ion-col>
             <ion-col size="6">
-              <ion-button :strong="true" fill="solid" color="primary">Accept Order</ion-button>
+              <ion-button  v-if="SELECTED_ORDER_DETAILS.status == 'Pending'" :strong="true" fill="solid" color="primary" @click="ACCEPT_ORDER">Accept Order</ion-button>
+            </ion-col>
+            <ion-col size="6">
+              <ion-button  v-if="SELECTED_ORDER_DETAILS.status == 'Preparing'" :strong="true" fill="solid" color="primary" @click="ORDER_TO_SHIP">SHIP</ion-button>
             </ion-col>
           </ion-row>
         </ion-grid>
@@ -56,12 +59,13 @@
 </template>
   
 <script setup lang="ts">
-import {IonLabel, IonFooter, IonCol, IonRow, IonGrid, IonList, IonCardContent, IonModal, IonCard, IonButtons, IonMenuToggle, IonIcon, IonContent, IonHeader, IonPage, IonTitle, IonToolbar, IonItem, IonInput, IonButton, useIonRouter } from '@ionic/vue';
+import { IonLabel, IonFooter, IonCol, IonRow, IonGrid, IonList, IonCardContent, IonModal, IonCard, IonButtons, IonMenuToggle, IonIcon, IonContent, IonHeader, IonPage, IonTitle, IonToolbar, IonItem, IonInput, IonButton, useIonRouter } from '@ionic/vue';
 import { menu } from 'ionicons/icons';
 import Toolbar from "@/views/components/toolbar.vue";
 import { arrowBack, cart, time, alert } from 'ionicons/icons';
 import { ref, onMounted, computed } from 'vue';
 import { useStore } from 'vuex';
+import { alertController } from '@ionic/vue';
 
 const store = useStore();
 const ORDER_DETAILS_DIALOG = computed(() => store.getters.ORDER_DETAILS_DIALOG);
@@ -69,7 +73,6 @@ const SELECTED_ORDER_DETAILS: any = computed(() => store.getters.SELECTED_ORDER_
 const ORDER_DETAILS = computed(() => store.getters.ORDER_DETAILS);
 const total = ref(null)
 const onPresent = () => {
-  console.log(SELECTED_ORDER_DETAILS.value)
   fetchOrderDetails()
 }
 const fetchOrderDetails = () => {
@@ -85,5 +88,62 @@ const fetchOrderDetails = () => {
 }
 const cancel = () => {
   store.commit('ORDER_DETAILS_DIALOG', false)
+}
+
+const ACCEPT_ORDER = () => {
+  const item = SELECTED_ORDER_DETAILS.value
+  const payload = {
+    customer_id: item.customer_id,
+    order_id: item.order_id
+  }
+  store.dispatch('ACCEPT_ORDER', payload).then(async(response) => {
+    if (response === 'success') {
+      store.commit('IS_ORDERS_CHANGE',true)
+      const alert = await alertController.create({
+        header: 'Success',
+        message: 'Order Accept Success',
+        buttons: ['OK'],
+      });
+      alert.present()
+    }
+  })
+}
+
+const ORDER_TO_SHIP = () => {
+  const item = SELECTED_ORDER_DETAILS.value
+  const payload = {
+    customer_id: item.customer_id,
+    order_id: item.order_id
+  }
+  store.dispatch('ORDER_TO_SHIP', payload).then(async(response) => {
+    if (response === 'success') {
+      store.commit('IS_ORDERS_CHANGE',true)
+      const alert = await alertController.create({
+        header: 'Success',
+        message: 'Order To Ship Success',
+        buttons: ['OK'],
+      });
+      alert.present()
+    }
+  })
+}
+
+const DECLINE_ORDER = () => {
+  const item = SELECTED_ORDER_DETAILS.value
+  const payload = {
+    customer_id: item.customer_id,
+    order_id: item.order_id
+  }
+  store.dispatch('DECLINE_ORDER', payload).then(async(response) => {
+    if (response === 'success') {
+      store.commit('IS_ORDERS_CHANGE',true)
+      const alert = await alertController.create({
+        header: 'Success',
+        message: 'Decline Order Success',
+        buttons: ['OK'],
+      });
+      alert.present()
+    }
+  })
 }
 </script>

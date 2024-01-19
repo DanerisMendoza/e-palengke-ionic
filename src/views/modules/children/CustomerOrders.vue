@@ -2,8 +2,10 @@
     <ion-page>
         <Toolbar />
         <ion-content>
+            <OrderDetailsDialog />
             <CustomerOrders :viewer="'customer'"/>
         </ion-content>
+        <OrdersFooter/>
     </ion-page>
 </template>
   
@@ -15,6 +17,10 @@ import CustomerOrders from "../../list/Orders.vue";
 import { computed, ref, watch } from 'vue';
 import { onIonViewWillEnter } from '@ionic/vue';
 import { useStore } from 'vuex';
+import OrdersFooter from "../../components/OrdersFooter.vue";
+import OrderDetailsDialog from "@/views/modal/OrderDetailsDialog.vue";
+
+
 const store = useStore();
 const USER_DETAILS = computed(() => store.getters.USER_DETAILS);
 
