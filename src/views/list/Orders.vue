@@ -49,6 +49,7 @@ import { IonRow, IonCol, IonGrid, IonCardContent, IonList, IonLabel, IonCard, Io
 import { chevronForwardOutline, } from 'ionicons/icons';
 import { useStore } from 'vuex';
 import { computed, ref, onMounted, watch } from 'vue';
+import { Toast } from '@capacitor/toast';
 import moment from 'moment';
 
 const prop = defineProps(['viewer']);
@@ -59,6 +60,7 @@ const SELECTED_ORDER_STATUS = computed(() => store.getters.SELECTED_ORDER_STATUS
 let USER_DETAILS_GLOBAL: any = ref(null)
 let store_id = ref(null)
 const SELECTED_ORDER_DETAILS: any = computed(() => store.getters.SELECTED_ORDER_DETAILS);
+const ORDER_DETAILS_DIALOG = computed(() => store.getters.ORDER_DETAILS_DIALOG);
 
 onMounted(async () => {
     await iniUserDetails()
@@ -103,9 +105,9 @@ watch(() => SELECTED_ORDER_STATUS.value, (newVal, oldVal) => {
 });
 
 watch(() => IS_ORDERS_CHANGE.value, (newVal, oldVal) => {
-    if(newVal){
+    if (newVal) {
         getOrders()
-        store.commit('IS_ORDERS_CHANGE',false)
+        store.commit('IS_ORDERS_CHANGE', false)
     }
 });
 

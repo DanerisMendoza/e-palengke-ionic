@@ -26,6 +26,7 @@
     "@ionic/vue-router": "^7.0.0",
     "@vue-leaflet/vue-leaflet": "^0.8.4",
     "axios": "^0.21.4",
+    "ionic-stepper": "^1.1.0",
     "ionicons": "^7.0.0",
     "laravel-echo": "^1.15.3",
     "leaflet": "^1.9.3",

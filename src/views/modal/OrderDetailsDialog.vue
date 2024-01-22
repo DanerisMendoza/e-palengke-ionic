@@ -1,5 +1,5 @@
 <template>
-  <ion-modal :is-open="ORDER_DETAILS_DIALOG" @willPresent="onPresent">
+  <ion-modal :is-open="ORDER_DETAILS_DIALOG" @willPresent="onPresent" @didDismiss="onClose">
     <ion-header>
       <ion-toolbar color="primary">
         <ion-button @click="cancel()" fill="clear" slot="start">
@@ -8,7 +8,37 @@
         <ion-title style="text-align: center; margin-right: 2rem;">ORDER DETAILS</ion-title>
       </ion-toolbar>
     </ion-header>
-    <ion-content class="ion-padding">
+    <ion-content>
+      <ion-grid>
+        <ion-row>
+          <ion-col size="12" class="ion-padding-top">
+            <!-- <center> -->
+            ORDER STATUS: <strong>{{ ORDER_DETAILS[0]?.status }}</strong>
+            <!-- </center> -->
+          </ion-col>
+          <ion-col size="12">
+            <ion-segment v-model="selectedSegment" :scrollable="true" @ionChange="segmentChange">
+              <ion-segment-button value="Pending" color="danger">
+                <ion-icon :icon="clipboardOutline"></ion-icon>
+              </ion-segment-button>
+              <ion-segment-button value="Preparing">
+                <ion-icon :icon="timeOutline"></ion-icon>
+              </ion-segment-button>
+              <ion-segment-button value="To Ship">
+                <ion-icon :icon="cubeOutline"></ion-icon>
+              </ion-segment-button>
+              <ion-segment-button value="Dropped off">
+                <ion-icon :icon="bagCheckOutline"></ion-icon>
+              </ion-segment-button>
+              <ion-segment-button value="Completed">
+                <ion-icon :icon="checkmarkDoneOutline"></ion-icon>
+              </ion-segment-button>
+            </ion-segment>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+
+
       <ion-card v-for="item in ORDER_DETAILS">
         <ion-card-content>
           <ion-list>
@@ -38,19 +68,22 @@
         <ion-grid>
           <ion-row class="ion-align-items-center ">
             <ion-col size="12">
-              <!-- <p>Total: ₱{{ SELECTED_ORDER_DETAILS.total }}</p> -->
+              <p>Date: <strong>{{ formatDate(SELECTED_ORDER_DETAILS.created_at) }}</strong></p>
+              <p>Total: <strong>₱{{ total }}</strong></p>
             </ion-col>
           </ion-row>
-          <ion-row class="ion-align-items-center ">
-            <ion-col size="6">
-              <ion-button v-if="SELECTED_ORDER_DETAILS.status == 'Pending'" :strong="true" fill="solid" color="danger" @click="DECLINE_ORDER">Decline Order</ion-button>
-            </ion-col>
-            <ion-col size="6">
-              <ion-button  v-if="SELECTED_ORDER_DETAILS.status == 'Pending'" :strong="true" fill="solid" color="primary" @click="ACCEPT_ORDER">Accept Order</ion-button>
-            </ion-col>
-            <ion-col size="6">
-              <ion-button  v-if="SELECTED_ORDER_DETAILS.status == 'Preparing'" :strong="true" fill="solid" color="primary" @click="ORDER_TO_SHIP">SHIP</ion-button>
-            </ion-col>
+          <ion-row>
+            <div v-if="route.name === 'STORE ORDERS'">
+              <ion-col size="6" v-if="ORDER_DETAILS[0]?.status == 'Pending'">
+                <ion-button :strong="true" fill="solid" color="danger" @click="DECLINE_ORDER">Decline Order</ion-button>
+              </ion-col>
+              <ion-col size="6" v-if="ORDER_DETAILS[0]?.status == 'Pending'">
+                <ion-button :strong="true" fill="solid" color="success" @click="ACCEPT_ORDER">Accept Order</ion-button>
+              </ion-col>
+              <ion-col size="12" v-if="ORDER_DETAILS[0]?.status == 'Preparing'">
+                <ion-button :strong="true" fill="solid" color="success" @click="ORDER_TO_SHIP">SHIP</ion-button>
+              </ion-col>
+            </div>
           </ion-row>
         </ion-grid>
       </ion-toolbar>
@@ -59,22 +92,57 @@
 </template>
   
 <script setup lang="ts">
-import { IonLabel, IonFooter, IonCol, IonRow, IonGrid, IonList, IonCardContent, IonModal, IonCard, IonButtons, IonMenuToggle, IonIcon, IonContent, IonHeader, IonPage, IonTitle, IonToolbar, IonItem, IonInput, IonButton, useIonRouter } from '@ionic/vue';
+import { alertController, IonLabel, IonFooter, IonCol, IonRow, IonGrid, IonList, IonCardContent, IonModal, IonCard, IonButtons, IonMenuToggle, IonIcon, IonContent, IonHeader, IonPage, IonTitle, IonToolbar, IonItem, IonInput, IonButton } from '@ionic/vue';
 import { menu } from 'ionicons/icons';
 import Toolbar from "@/views/components/toolbar.vue";
-import { arrowBack, cart, time, alert } from 'ionicons/icons';
+import { clipboardOutline, arrowBack, cart, time, alert, timeOutline, cubeOutline, bagCheckOutline, checkmarkDoneOutline } from 'ionicons/icons';
 import { ref, onMounted, computed } from 'vue';
 import { useStore } from 'vuex';
-import { alertController } from '@ionic/vue';
+import { useRoute } from 'vue-router';
+import moment from 'moment';
+import { IonSegment, IonSegmentButton } from '@ionic/vue';
+import { home, heart, pin, star, call, globe, basket, barbell, trash, person } from 'ionicons/icons'
+import { Toast } from '@capacitor/toast';
 
+const route = useRoute();
 const store = useStore();
+const USER_DETAILS = computed(() => store.getters.USER_DETAILS);
 const ORDER_DETAILS_DIALOG = computed(() => store.getters.ORDER_DETAILS_DIALOG);
 const SELECTED_ORDER_DETAILS: any = computed(() => store.getters.SELECTED_ORDER_DETAILS);
-const ORDER_DETAILS = computed(() => store.getters.ORDER_DETAILS);
-const total = ref(null)
+const ORDER_DETAILS: any = computed(() => store.getters.ORDER_DETAILS);
+const selectedSegment = ref("Pending");
+const selectedSegmentOrigin = ref("Pending");
+const total = computed(() => {
+  // Calculate the total based on the sum of subtotals in ORDER_DETAILS
+  if (ORDER_DETAILS.value) {
+    return ORDER_DETAILS.value.reduce((acc: number, item: any) => {
+      return acc + item.price * item.quantity;
+    }, 0);
+  }
+  return 0; // Default value if ORDER_DETAILS is empty or undefined
+});
 const onPresent = () => {
   fetchOrderDetails()
+  initWebsockets()
 }
+const onClose = () => {
+  store.commit('ORDER_DETAILS_DIALOG', false)
+}
+
+const segmentChange = () => {
+  selectedSegment.value = selectedSegmentOrigin.value
+}
+
+const initWebsockets = async () => {
+    const echo = window.echo;
+    const Pusher = window.Pusher;
+    echo.channel('channel-OrderDetailsEvent' + USER_DETAILS.value.user_id)
+    .listen('OrderDetailsEvent', (data: any) => {
+      fetchOrderDetails()
+    });
+    console.log(USER_DETAILS.value)
+}
+
 const fetchOrderDetails = () => {
   const payload = {
     params: {
@@ -83,22 +151,27 @@ const fetchOrderDetails = () => {
     }
   }
   store.dispatch('GET_ORDER_DETAILS', payload).then(() => {
+    // console.log(SELECTED_ORDER_DETAILS)
     // console.log(ORDER_DETAILS)
+    selectedSegmentOrigin.value = ORDER_DETAILS.value[0]?.status
+    selectedSegment.value = selectedSegmentOrigin.value
   })
 }
 const cancel = () => {
   store.commit('ORDER_DETAILS_DIALOG', false)
 }
 
-const ACCEPT_ORDER = () => {
+const ACCEPT_ORDER = async () => {
   const item = SELECTED_ORDER_DETAILS.value
   const payload = {
     customer_id: item.customer_id,
     order_id: item.order_id
   }
-  store.dispatch('ACCEPT_ORDER', payload).then(async(response) => {
+
+  await store.dispatch('ACCEPT_ORDER', payload).then(async (response) => {
     if (response === 'success') {
-      store.commit('IS_ORDERS_CHANGE',true)
+      store.commit('IS_ORDERS_CHANGE', true)
+      fetchOrderDetails()
       const alert = await alertController.create({
         header: 'Success',
         message: 'Order Accept Success',
@@ -115,9 +188,10 @@ const ORDER_TO_SHIP = () => {
     customer_id: item.customer_id,
     order_id: item.order_id
   }
-  store.dispatch('ORDER_TO_SHIP', payload).then(async(response) => {
+  store.dispatch('ORDER_TO_SHIP', payload).then(async (response) => {
     if (response === 'success') {
-      store.commit('IS_ORDERS_CHANGE',true)
+      store.commit('IS_ORDERS_CHANGE', true)
+      fetchOrderDetails()
       const alert = await alertController.create({
         header: 'Success',
         message: 'Order To Ship Success',
@@ -134,9 +208,10 @@ const DECLINE_ORDER = () => {
     customer_id: item.customer_id,
     order_id: item.order_id
   }
-  store.dispatch('DECLINE_ORDER', payload).then(async(response) => {
+  store.dispatch('DECLINE_ORDER', payload).then(async (response) => {
     if (response === 'success') {
-      store.commit('IS_ORDERS_CHANGE',true)
+      store.commit('IS_ORDERS_CHANGE', true)
+      store.commit('ORDER_DETAILS_DIALOG', false)
       const alert = await alertController.create({
         header: 'Success',
         message: 'Decline Order Success',
@@ -146,4 +221,40 @@ const DECLINE_ORDER = () => {
     }
   })
 }
+
+const formatDate = (date: any) => {
+  return moment(date).format('MMMM D, YYYY - hh:mm A')
+};
 </script>
+
+<style>
+  ion-segment-button::part(indicator-background) {
+    background: #3880ff;
+  }
+
+  /* Material Design styles */
+  ion-segment-button.md::part(native) {
+    color: #000;
+  }
+
+  .segment-button-checked.md::part(native) {
+    color: #3880ff;
+  }
+
+  ion-segment-button.md::part(indicator-background) {
+    height: 4px;
+  }
+
+  /* iOS styles */
+  ion-segment-button.ios::part(native) {
+    color: #3880ff;
+  }
+
+  .segment-button-checked.ios::part(native) {
+    color: #fff;
+  }
+
+  ion-segment-button.ios::part(indicator-background) {
+    border-radius: 20px;
+  }
+</style>
