@@ -32,22 +32,21 @@ declare global {
     echo: any
   }
 }
-
-window.Pusher = Pusher;
+// pusher only
+window.Pusher = new Pusher('352de43b53541443acec', { cluster: 'ap1' });
 
 // Initialize Laravel Echo
-const echo = new Echo({
-  broadcaster: 'pusher',
-  key: 'e_palengke_key',
-  wsHost: '192.168.54.239',
-  wsPort: 6001,
-  forceTLS: false,
-  disableStats: true,
-  cluster: 'mt1',
-});
-
-// Make Echo available globally
-window.echo = echo
+// const echo = new Echo({
+//   broadcaster: 'pusher',
+//   key: 'e_palengke_key',
+//   wsHost: '192.168.1.4',
+//   wsPort: 6001,
+//   forceTLS: false,
+//   disableStats: true,
+//   cluster: 'mt1',
+// });
+// // Make Echo available globally
+// window.echo = echo
 
 const app = createApp(App)
   .use(IonicVue)

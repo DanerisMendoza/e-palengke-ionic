@@ -65,10 +65,11 @@ const ORDER_DETAILS_DIALOG = computed(() => store.getters.ORDER_DETAILS_DIALOG);
 onMounted(async () => {
     await iniUserDetails()
     await getOrders()
-    await initWebsockets()
+    // await initWebsocketsLocal()
+    await initWebsocketsPusher()
 })
 
-const initWebsockets = async () => {
+const initWebsocketsLocal = async () => {
     const echo = window.echo;
     const Pusher = window.Pusher;
     echo.channel('channel-OrderEvent' + USER_DETAILS_GLOBAL.value.user_id)
@@ -76,6 +77,14 @@ const initWebsockets = async () => {
             // console.log(data.result)
             getOrders()
         });
+}
+
+const initWebsocketsPusher = async () => {
+    const pusher = window.Pusher;
+    const channel = pusher.subscribe('channel-OrderEvent' + USER_DETAILS_GLOBAL.value.user_id);
+    channel.bind('OrderEvent', () => {
+        getOrders()
+    });
 }
 
 const iniUserDetails = async () => {

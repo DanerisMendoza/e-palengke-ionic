@@ -123,7 +123,8 @@ const total = computed(() => {
 });
 const onPresent = () => {
   fetchOrderDetails()
-  initWebsockets()
+  // initWebsockets()
+  initWebsocketsPusher()
 }
 const onClose = () => {
   store.commit('ORDER_DETAILS_DIALOG', false)
@@ -141,6 +142,14 @@ const initWebsockets = async () => {
       fetchOrderDetails()
     });
     console.log(USER_DETAILS.value)
+}
+
+const initWebsocketsPusher = async () => {
+    const pusher = window.Pusher;
+    const channel = pusher.subscribe('channel-OrderDetailsEvent' + USER_DETAILS.value.user_id);
+    channel.bind('OrderDetailsEvent', () => {
+      fetchOrderDetails()
+    });
 }
 
 const fetchOrderDetails = () => {
