@@ -9,7 +9,8 @@
                             <ion-select-option value="Pending">PENDING</ion-select-option>
                             <ion-select-option value="Preparing">PREPARING</ion-select-option>
                             <ion-select-option value="To Ship">TO-SHIP</ion-select-option>
-                            <ion-select-option value="Dropped off">DROPPED OFF</ion-select-option>
+                            <ion-select-option value="To Receive">TO RECEIVE</ion-select-option>
+                            <ion-select-option value="Received">RECEIVED</ion-select-option>
                             <ion-select-option value="Completed">COMPLETED</ion-select-option>
                         </ion-select>
                     </ion-col>

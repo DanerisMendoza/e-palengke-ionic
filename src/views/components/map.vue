@@ -3,20 +3,20 @@
     <ProductCustomerViewDialog v-if="sidenavViewer === 'store'" />
     <ion-button v-if="sidenavViewer === 'store'" ref="myButton" id="open-modal" expand="block"
         v-show="isButtonVisible"></ion-button>
-    <CartDialog  v-if="sidenavViewer === 'store'"/>
+    <CartDialog v-if="sidenavViewer === 'store'" />
     <ion-button v-if="sidenavViewer === 'store'" id="CartButton" color="light" class="buttons" @click="viewCart">
         <ion-icon color="primary" :icon="cart"></ion-icon>
     </ion-button>
     <!-- leaflet map -->
-    <l-map ref="mapRef" :zoom="zoom" :center="center" id="leafletMap" v-if="lmapShow">
+    <l-map ref="mapRef" :zoom="zoom" :center="center" id="leafletMap" v-if="lmapShow" :style="mapStyle">
         <!-- <l-tile-layer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" name="OpenStreetMap"></l-tile-layer> -->
         <l-tile-layer :url="googleStreets.url" :maxZoom="googleStreets.maxZoom"
             :subdomains="googleStreets.subdomains"></l-tile-layer>
         <!-- current marker(dynamic icon) -->
         <l-marker v-if="MARKER_LAT_LNG !== null" :lat-lng="MARKER_LAT_LNG" :icon="computedMarker"></l-marker>
         <!-- multiple marker(stores) -->
-        <l-marker v-if="sidenavViewer === 'store'" v-for="(item, index) in storeMarkersInsideCircle" 
-            :key="index" :lat-lng="item" :icon="isMarkerSelected(item,index)" @click="go(item,index)">
+        <l-marker v-if="sidenavViewer === 'store'" v-for="(item, index) in storeMarkersInsideCircle" :key="index"
+            :lat-lng="item" :icon="isMarkerSelected(item, index)" @click="go(item, index)">
         </l-marker>
         <!-- radius -->
         <l-circle v-if="MARKER_LAT_LNG !== null" :lat-lng="MARKER_LAT_LNG" :radius="circleRadius" :fill="true"
@@ -80,6 +80,17 @@ export default defineComponent({
             "SELECTED_STORE",
         ]),
 
+        mapStyle() {
+            if (this.sidenavViewer === 'delivery') {
+                return {
+                    border: '0.5px solid #000',
+                    height: '200px',
+                    width: '300px',
+                    margin: 'auto',
+                };
+            }
+        },
+
         computedMarker() {
             if (this.sidenavViewer === 'store' || this.sidenavViewer === 'testgps') {
                 return this.personMarker
@@ -138,7 +149,7 @@ export default defineComponent({
     },
 
     methods: {
-        isMarkerSelected(marker,index) {
+        isMarkerSelected(marker, index) {
             return index === this.pin ? this.selectedMarker : this.sellerMarker
         },
         checkData(data) {
@@ -149,7 +160,7 @@ export default defineComponent({
             //     console.log(this.CART)
             // });
         },
-        async go(item,index) {
+        async go(item, index) {
             this.pin = index;
             const buttonRef = this.$refs.myButton;
             if (buttonRef) {

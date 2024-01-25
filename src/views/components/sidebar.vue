@@ -12,6 +12,8 @@
               :icon="personCircle"></ion-icon>HOME</ion-item>
           <ion-item @click="navigateTo({ name: 'STORE' })"><ion-icon slot="start"
               :icon="storefront"></ion-icon>STORE</ion-item>
+          <ion-item v-if="USER_DETAILS.isDelivery" @click="navigateTo({ name: 'DELIVERY' })"><ion-icon slot="start"
+              :icon="bicycleOutline"></ion-icon>DELIVERY</ion-item>
         </ion-menu-toggle>
         <ion-accordion-group>
           <ion-accordion value="first">
@@ -24,9 +26,9 @@
             <ion-item style="padding-left: 40px;" slot="content"
               @click="navigateTo({ name: 'CUSTOMER ORDERS' })"><ion-icon slot="start"
                 :icon="returnDownForwardOutline"></ion-icon>CUSTOMER</ion-item>
-            <ion-item v-if="USER_DETAILS.isDelivery" style="padding-left: 40px;" slot="content"
+            <!-- <ion-item v-if="USER_DETAILS.isDelivery" style="padding-left: 40px;" slot="content"
               @click="navigateTo({ name: 'DELIVERY' })"><ion-icon slot="start"
-                :icon="returnDownForwardOutline"></ion-icon>DELIVERY</ion-item>
+                :icon="returnDownForwardOutline"></ion-icon>DELIVERY</ion-item> -->
           </ion-accordion>
         </ion-accordion-group>
         <ion-menu-toggle>
@@ -43,7 +45,7 @@
 
 <script setup lang="ts">
 import { IonIcon, IonLabel, IonAccordion, IonAccordionGroup, IonRouterOutlet, IonButtons, IonContent, IonHeader, IonMenu, IonMenuButton, IonPage, IonTitle, IonToolbar, IonMenuToggle, IonItem, IonList } from '@ionic/vue';
-import { returnDownForwardOutline, logOutOutline, cart, personCircle, storefront } from 'ionicons/icons';
+import { returnDownForwardOutline, logOutOutline, cart, personCircle, storefront,bicycleOutline } from 'ionicons/icons';
 import { useStore } from 'vuex';
 import { useRoute, useRouter } from 'vue-router';
 import { computed, ref } from 'vue';

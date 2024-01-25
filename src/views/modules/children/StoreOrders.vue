@@ -2,8 +2,8 @@
     <ion-page>
         <Toolbar />
         <ion-content>
-            <OrderDetailsDialog />
-            <CustomerOrders :viewer="'store'" />
+            <OrderDetailsDialog :viewer="'store'"/>
+            <CustomerOrders :viewer="'store'"/>
         </ion-content>
         <OrdersFooter/>
     </ion-page>

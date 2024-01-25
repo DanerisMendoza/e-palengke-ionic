@@ -3,6 +3,7 @@ import { RouteRecordRaw } from 'vue-router';
 import login from '../views/modules/login.vue';
 import home from '../views/modules/home.vue';
 import store from '../views/modules/store.vue';
+import delivery from '../views/modules/delivery.vue';
 import TEST from '../views/modules/test.vue';
 import TESTCAMERA from '../views/modules/TESTCAMERA.vue';
 import TESTGPS from '../views/modules/TESTGPS.vue';
@@ -32,6 +33,12 @@ const routes: Array<RouteRecordRaw> = [
     path: '/STORE',
     name: 'STORE',
     component: store,
+    meta: { requiresAuth: true },
+  },
+  {
+    path: '/DELIVERY',
+    name: 'DELIVERY',
+    component: delivery,
     meta: { requiresAuth: true },
   },
   {

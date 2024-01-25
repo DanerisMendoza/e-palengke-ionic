@@ -11,10 +11,15 @@
     <ion-content>
       <ion-grid>
         <ion-row>
-          <ion-col size="12" class="ion-padding-top">
+          <ion-col size="10" class="ion-padding-top">
             <!-- <center> -->
             ORDER STATUS: <strong>{{ ORDER_DETAILS[0]?.status }}</strong>
             <!-- </center> -->
+          </ion-col>
+          <ion-col size="2">
+            <ion-button @click="track()" >
+              <ion-icon :icon="mapOutline" ></ion-icon>
+            </ion-button>
           </ion-col>
           <ion-col size="12">
             <ion-segment v-model="selectedSegment" :scrollable="true" @ionChange="segmentChange">
@@ -27,7 +32,10 @@
               <ion-segment-button value="To Ship">
                 <ion-icon :icon="cubeOutline"></ion-icon>
               </ion-segment-button>
-              <ion-segment-button value="Dropped off">
+              <ion-segment-button value="To Receive">
+                <ion-icon :icon="bagAddOutline"></ion-icon>
+              </ion-segment-button>
+              <ion-segment-button value="Received">
                 <ion-icon :icon="bagCheckOutline"></ion-icon>
               </ion-segment-button>
               <ion-segment-button value="Completed">
@@ -95,7 +103,7 @@
 import { alertController, IonLabel, IonFooter, IonCol, IonRow, IonGrid, IonList, IonCardContent, IonModal, IonCard, IonButtons, IonMenuToggle, IonIcon, IonContent, IonHeader, IonPage, IonTitle, IonToolbar, IonItem, IonInput, IonButton } from '@ionic/vue';
 import { menu } from 'ionicons/icons';
 import Toolbar from "@/views/components/toolbar.vue";
-import { clipboardOutline, arrowBack, cart, time, alert, timeOutline, cubeOutline, bagCheckOutline, checkmarkDoneOutline } from 'ionicons/icons';
+import { bagAddOutline, mapOutline, bagHandleOutline, clipboardOutline, arrowBack, cart, time, alert, timeOutline, cubeOutline, bagCheckOutline, checkmarkDoneOutline } from 'ionicons/icons';
 import { ref, onMounted, computed } from 'vue';
 import { useStore } from 'vuex';
 import { useRoute } from 'vue-router';
@@ -112,6 +120,8 @@ const SELECTED_ORDER_DETAILS: any = computed(() => store.getters.SELECTED_ORDER_
 const ORDER_DETAILS: any = computed(() => store.getters.ORDER_DETAILS);
 const selectedSegment = ref("Pending");
 const selectedSegmentOrigin = ref("Pending");
+const prop = defineProps(['viewer']);
+// Toast.show({text: 'viewer: '+prop.viewer});
 const total = computed(() => {
   // Calculate the total based on the sum of subtotals in ORDER_DETAILS
   if (ORDER_DETAILS.value) {
@@ -130,26 +140,30 @@ const onClose = () => {
   store.commit('ORDER_DETAILS_DIALOG', false)
 }
 
+const track = () => {
+
+}
+
 const segmentChange = () => {
   selectedSegment.value = selectedSegmentOrigin.value
 }
 
 const initWebsockets = async () => {
-    const echo = window.echo;
-    const Pusher = window.Pusher;
-    echo.channel('channel-OrderDetailsEvent' + USER_DETAILS.value.user_id)
+  const echo = window.echo;
+  const Pusher = window.Pusher;
+  echo.channel('channel-OrderDetailsEvent' + USER_DETAILS.value.user_id)
     .listen('OrderDetailsEvent', (data: any) => {
       fetchOrderDetails()
     });
-    console.log(USER_DETAILS.value)
+  console.log(USER_DETAILS.value)
 }
 
 const initWebsocketsPusher = async () => {
-    const pusher = window.Pusher;
-    const channel = pusher.subscribe('channel-OrderDetailsEvent' + USER_DETAILS.value.user_id);
-    channel.bind('OrderDetailsEvent', () => {
-      fetchOrderDetails()
-    });
+  const pusher = window.Pusher;
+  const channel = pusher.subscribe('channel-OrderDetailsEvent' + USER_DETAILS.value.user_id);
+  channel.bind('OrderDetailsEvent', () => {
+    fetchOrderDetails()
+  });
 }
 
 const fetchOrderDetails = () => {
@@ -237,33 +251,33 @@ const formatDate = (date: any) => {
 </script>
 
 <style>
-  ion-segment-button::part(indicator-background) {
-    background: #3880ff;
-  }
+ion-segment-button::part(indicator-background) {
+  background: #3880ff;
+}
 
-  /* Material Design styles */
-  ion-segment-button.md::part(native) {
-    color: #000;
-  }
+/* Material Design styles */
+ion-segment-button.md::part(native) {
+  color: #000;
+}
 
-  .segment-button-checked.md::part(native) {
-    color: #3880ff;
-  }
+.segment-button-checked.md::part(native) {
+  color: #3880ff;
+}
 
-  ion-segment-button.md::part(indicator-background) {
-    height: 4px;
-  }
+ion-segment-button.md::part(indicator-background) {
+  height: 4px;
+}
 
-  /* iOS styles */
-  ion-segment-button.ios::part(native) {
-    color: #3880ff;
-  }
+/* iOS styles */
+ion-segment-button.ios::part(native) {
+  color: #3880ff;
+}
 
-  .segment-button-checked.ios::part(native) {
-    color: #fff;
-  }
+.segment-button-checked.ios::part(native) {
+  color: #fff;
+}
 
-  ion-segment-button.ios::part(indicator-background) {
-    border-radius: 20px;
-  }
+ion-segment-button.ios::part(indicator-background) {
+  border-radius: 20px;
+}
 </style>
