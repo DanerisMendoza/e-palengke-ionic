@@ -8,7 +8,9 @@
 <script setup lang="ts">
 import { IonApp, IonRouterOutlet } from '@ionic/vue';
 import Sidebar from "@/views/components/sidebar.vue";
+import { StatusBar, Style } from '@capacitor/status-bar';
 
+StatusBar.setBackgroundColor({color:'#3880ff'})
 </script>
 
 <style>
