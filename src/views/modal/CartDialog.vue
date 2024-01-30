@@ -36,7 +36,7 @@
                                     <ion-row>
                                         <ion-col size="1"></ion-col>
                                         <ion-col size="11">
-                                            <ion-tab-bar  color=" ">
+                                            <ion-tab-bar  color=" " >
                                                 <ion-button size="small" fill="outline" color="dark"
                                                     @click="deacreaseQuantity(item)"><strong>-</strong></ion-button>
                                                 <ion-button size="small" fill="outline" color="dark"><strong>{{

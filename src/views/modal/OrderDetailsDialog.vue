@@ -17,8 +17,8 @@
             <!-- </center> -->
           </ion-col>
           <ion-col size="2">
-            <ion-button @click="track()" >
-              <ion-icon :icon="mapOutline" ></ion-icon>
+            <ion-button @click="track()">
+              <ion-icon :icon="mapOutline"></ion-icon>
             </ion-button>
           </ion-col>
           <ion-col size="12">
@@ -50,23 +50,21 @@
       <ion-card v-for="item in ORDER_DETAILS">
         <ion-card-content>
           <ion-list>
-            <ion-grid>
-              <ion-row>
-                <ion-col size="12">Product Name: {{ item.name }}</ion-col>
-              </ion-row>
-              <ion-row>
-                <ion-col size="12">Store Name: {{ item.store_name }}</ion-col>
-              </ion-row>
-              <ion-row>
-                <ion-col size="12">Quantity: {{ item.quantity }}</ion-col>
-              </ion-row>
-              <ion-row>
-                <ion-col size="12">Price: ₱{{ item.price }}</ion-col>
-              </ion-row>
-              <ion-row>
-                <ion-col size="12">SubTotal: ₱{{ (item.price * item.quantity) }}</ion-col>
-              </ion-row>
-            </ion-grid>
+            <ion-item lines="none">
+              <ion-label size="12">Product Name: {{ item.name }}</ion-label>
+            </ion-item>
+            <ion-item lines="none">
+              <ion-label size="12">Store Name: {{ item.store_name }}</ion-label>
+            </ion-item>
+            <ion-item lines="none">
+              <ion-label size="12">Quantity: {{ item.quantity }}</ion-label>
+            </ion-item>
+            <ion-item lines="none">
+              <ion-label size="12">Price: ₱{{ item.price }}</ion-label>
+            </ion-item>
+            <ion-item lines="none">
+              <ion-label size="12">SubTotal: ₱{{ (item.price * item.quantity) }}</ion-label>
+            </ion-item>
           </ion-list>
         </ion-card-content>
       </ion-card>

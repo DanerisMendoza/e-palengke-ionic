@@ -5,30 +5,30 @@
                 <ion-row>
                     <ion-col size="11">
                         <ion-list v-if="prop.viewer == 'customer'">
-                            <ion-item>
+                            <ion-item lines="none">
                                 <ion-label>{{ formatDate(item.created_at) }}</ion-label>
                             </ion-item>
-                            <ion-item>
+                            <ion-item lines="none">
                                 <ion-label>Store Name: {{ item.name }}</ion-label>
                             </ion-item>
-                            <ion-item>
+                            <ion-item lines="none">
                                 <ion-label>Status: {{ item.status }}</ion-label>
                             </ion-item>
-                            <ion-item>
+                            <ion-item lines="none">
                                 <ion-label>Total: ₱{{ item.total }}</ion-label>
                             </ion-item>
                         </ion-list>
                         <ion-list v-else-if="prop.viewer == 'store'">
-                            <ion-item>
+                            <ion-item lines="none">
                                 <ion-label>{{ formatDate(item.created_at) }}</ion-label>
                             </ion-item>
-                            <ion-item>
+                            <ion-item lines="none">
                                 <ion-label>Customer Name: {{ item.customer_name }}</ion-label>
                             </ion-item>
-                            <ion-item>
+                            <ion-item lines="none">
                                 <ion-label>Status: {{ item.status }}</ion-label>
                             </ion-item>
-                            <ion-item>
+                            <ion-item lines="none">
                                 <ion-label>Total: ₱{{ item.total }}</ion-label>
                             </ion-item>
                         </ion-list>
