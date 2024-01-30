@@ -3,25 +3,25 @@
         @willPresent="onPresent">
         <ion-content class="ion-padding">
             <ion-list>
-                <ion-item>
+                <ion-item lines="none">
                     <ion-label>
                         <h2>Store Name:</h2>
                         <p>{{ SELECTED_STORE.name }}</p>
                     </ion-label>
                 </ion-item>
-                <ion-item>
+                <ion-item lines="none">
                     <ion-label>
                         <h2>Address</h2>
                         <p>{{ SELECTED_STORE.address }}</p>
                     </ion-label>
                 </ion-item>
-                <ion-item>
+                <ion-item lines="none">
                     <ion-label>
                         <h2>Contact</h2>
                         <p>{{ SELECTED_STORE.storeOwner.phone_number }}</p>
                     </ion-label>
                 </ion-item>
-                <ion-item>
+                <ion-item lines="none">
                     <ion-label>
                         <h2>Store Type Details</h2>
                         <ion-chip v-for="(detail, index) in SELECTED_STORE.store_type_details" :key="index" class="mr-2"
@@ -31,7 +31,7 @@
                     </ion-label>
                 </ion-item>
 
-                <ion-item>
+                <ion-item lines="none">
                     <ion-label>
                         <ion-accordion-group>
                             <ion-accordion value="first">
