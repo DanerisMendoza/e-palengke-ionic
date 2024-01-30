@@ -106,7 +106,7 @@ const TRANSACTION = computed(() => store.getters.TRANSACTION);
 const CURRENT_TRANSACTION_ID = computed(() => store.getters.CURRENT_TRANSACTION_ID);
 const circleRadius = ref(50)
 const countdown = ref(0)
-const defaultCountdown = ref(10)
+const defaultCountdown = ref(180)
 const isRunning = ref(false)
 const hasDeliver = ref(false)
 const newOrder = ref(false)
