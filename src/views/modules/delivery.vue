@@ -4,7 +4,7 @@
         <ion-content class="center-content ion-padding-top">
             <ion-toggle v-model="isRunning" class="ion-padding-bottom">Start Shift</ion-toggle>
             <mapComp :sidenavViewer="'delivery'" />
-            <ion-card v-if="isRunning && TRANSACTION.length">
+            <ion-card v-if="isRunning && TRANSACTION.length != 0">
                 <ion-card-content>
                     <ion-list>
                         <ion-list-header>New Order Incoming</ion-list-header>
@@ -149,12 +149,14 @@ const decrementProgress = () => {
     }
     else {
         clearInterval(intervalId);
-        store.commit('ORDER_STORE_LAT_LNG', [])
-        store.commit('TRANSACTION', [])
-        newOrder.value = false
-        loaded.value = false
-        progress.value = 1
-        countdown.value = 0
+        if(TRANSACTION.value.length == 0){
+            store.commit('ORDER_STORE_LAT_LNG', [])
+            store.commit('TRANSACTION', [])
+            newOrder.value = false
+            loaded.value = false
+            progress.value = 1
+            countdown.value = 0
+        }
     }
 };
 

@@ -77,6 +77,11 @@ const initWebsocketsLocal = async () => {
             // console.log(data.result)
             getOrders()
         });
+    echo.channel('channel-OrderDetailsEvent' + USER_DETAILS_GLOBAL.value.user_id)
+        .listen('OrderDetailsEvent', (data: any) => {
+            // console.log(data.result)
+            getOrders()
+        });
 }
 
 const initWebsocketsPusher = async () => {
