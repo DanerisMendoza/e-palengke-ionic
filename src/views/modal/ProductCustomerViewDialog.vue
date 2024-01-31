@@ -79,7 +79,7 @@
                         </ion-card>
                     </swiper-slide>
                 </swiper>
-                <swiper :slides-per-view="3">
+                <swiper :slides-per-view="3" :autoplay="{ delay: 3000 }">
                     <swiper-slide v-for="(item, index) in PRODUCT" @click="logIndex(index)">
                         <ion-card>
                             <ion-card-content>
