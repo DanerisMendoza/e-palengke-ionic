@@ -294,4 +294,7 @@ export default defineComponent({
     position: absolute;
     z-index: 401;
 }
+.leaflet-control-attribution.leaflet-control {
+    display: none;
+}
 </style>
