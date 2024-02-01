@@ -4,14 +4,15 @@
     <ion-button v-if="sidenavViewer === 'store'" ref="myButton" id="open-modal" expand="block"
         v-show="isButtonVisible"></ion-button>
     <CartDialog v-if="sidenavViewer === 'store'" />
-    <ion-button v-if="sidenavViewer === 'store'" id="CartButton" color="light" class="buttons" @click="viewCart">
-        <ion-icon color="primary" :icon="cart"></ion-icon>
+    <ion-button v-if="sidenavViewer === 'store'" id="CartButton" color="primary"  class="buttons" @click="viewCart">
+        <ion-icon :icon="cart"></ion-icon>
     </ion-button>
     <!-- leaflet map -->
     <l-map ref="mapRef" :zoom="zoom" :center="center" id="leafletMap" v-if="lmapShow" :style="mapStyle">
         <!-- <l-tile-layer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" name="OpenStreetMap"></l-tile-layer> -->
-        <l-tile-layer :url="googleStreets.url" :maxZoom="googleStreets.maxZoom"
-            :subdomains="googleStreets.subdomains"></l-tile-layer>
+        <l-tile-layer url='https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png'></l-tile-layer>
+        <!-- <l-tile-layer :url="googleStreets.url" :maxZoom="googleStreets.maxZoom"
+            :subdomains="googleStreets.subdomains"></l-tile-layer> -->
         <!-- current marker(dynamic icon) -->
         <l-marker v-if="MARKER_LAT_LNG !== null" :lat-lng="MARKER_LAT_LNG" :icon="computedMarker"></l-marker>
         <!-- multiple marker(stores) -->
