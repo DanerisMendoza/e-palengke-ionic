@@ -45,7 +45,7 @@
 </template>
 
 <script setup lang="ts">
-import { IonList, IonCardContent, IonCard, IonImg, IonButtons, IonMenuToggle, IonIcon, IonContent, IonHeader, IonPage, IonTitle, IonToolbar, IonItem, IonInput, IonButton, useIonRouter } from '@ionic/vue';
+import { IonChip,IonList, IonCardContent, IonCard, IonImg, IonButtons, IonMenuToggle, IonIcon, IonContent, IonHeader, IonPage, IonTitle, IonToolbar, IonItem, IonInput, IonButton, useIonRouter } from '@ionic/vue';
 import { menu } from 'ionicons/icons';
 import { register } from 'swiper/element/bundle';
 import { useStore } from 'vuex';

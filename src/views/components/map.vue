@@ -4,36 +4,38 @@
     <ion-button v-if="sidenavViewer === 'store'" ref="myButton" id="open-modal" expand="block"
         v-show="isButtonVisible"></ion-button>
     <CartDialog v-if="sidenavViewer === 'store'" />
-    <ion-button v-if="sidenavViewer === 'store'" id="CartButton" color="primary"  class="buttons" @click="viewCart">
+    <ion-button v-if="sidenavViewer === 'store'" id="CartButton" color="primary" class="buttons" >
         <ion-icon :icon="cart"></ion-icon>
     </ion-button>
     <!-- leaflet map -->
-    <l-map ref="mapRef" :zoom="zoom" :center="center" id="leafletMap" v-if="lmapShow" :style="mapStyle">
+    <l-map ref="mapRef" :zoom="zoom" :center="center" id="leafletMap"  :style="mapStyle">
         <!-- <l-tile-layer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" name="OpenStreetMap"></l-tile-layer> -->
         <l-tile-layer url='https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png'></l-tile-layer>
         <!-- <l-tile-layer :url="googleStreets.url" :maxZoom="googleStreets.maxZoom"
             :subdomains="googleStreets.subdomains"></l-tile-layer> -->
         <!-- current marker(dynamic icon) -->
+        <LRoutingMachine v-bind="routingOptions" v-if="sidenavViewer === 'store'"/>
         <l-marker v-if="MARKER_LAT_LNG !== null" :lat-lng="MARKER_LAT_LNG" :icon="computedMarker"></l-marker>
         <!-- multiple marker(stores) -->
         <l-marker v-if="sidenavViewer === 'store'" v-for="(item, index) in storeMarkersInsideCircle" :key="index"
             :lat-lng="item" :icon="isMarkerSelected(item, index)" @click="go(item, index)">
         </l-marker>
         <!-- multiple marker(delivery) -->
-        <l-marker v-if="sidenavViewer === 'delivery' && TRANSACTION.length != 0" v-for="(item, index) in ORDER_STORE_LAT_LNG"
-            ref="markers" :key="index" :lat-lng="{ lat: item.latitude, lng: item.longitude }" :icon="sellerMarker">
+        <l-marker v-if="sidenavViewer === 'delivery' && TRANSACTION.length != 0"
+            v-for="(item, index) in ORDER_STORE_LAT_LNG" ref="markers" :key="index"
+            :lat-lng="{ lat: item.latitude, lng: item.longitude }" :icon="sellerMarker">
         </l-marker>
 
         <!-- radius -->
         <l-circle v-if="MARKER_LAT_LNG !== null" :lat-lng="MARKER_LAT_LNG" :radius="circleRadius" :fill="true"
             :fill-opacity="0.1" :color="'#1919FF'" :weight="0.5" style="cursor: move"></l-circle>
+
     </l-map>
 </template>
   
 <script >
-import { defineComponent, onMounted, onBeforeUnmount, ref } from 'vue';
+import { defineComponent, onMounted, onBeforeUnmount, ref, reactive } from 'vue';
 import { IonModal, IonContent, IonHeader, IonPage, IonTitle, IonToolbar, IonItem, IonInput, IonButton, useIonRouter, IonIcon, } from '@ionic/vue';
-import "leaflet/dist/leaflet.css";
 import { LMap, LTileLayer, LMarker, LIcon, LCircle, LTooltip, LPopup, LControlZoom } from "@vue-leaflet/vue-leaflet";
 import L from 'leaflet';
 import { mapGetters } from 'vuex';
@@ -44,10 +46,14 @@ import ProductCustomerViewDialog from "@/views/modal/ProductCustomerViewDialog.v
 import CartDialog from "@/views/modal/CartDialog.vue";
 import { cart, time, alert } from 'ionicons/icons';
 import selectedMarker from '@/assets/markers/selectedMarker.png';
+import "leaflet-routing-machine";
+import "leaflet-routing-machine/dist/leaflet-routing-machine.css";
+import "leaflet/dist/leaflet.css";
+import LRoutingMachine from "./LRoutingMachine.vue";
 
-
-export default defineComponent({
+export default {
     components: {
+        LRoutingMachine,
         ProductCustomerViewDialog,
         IonContent, IonHeader, IonPage, IonTitle, IonToolbar, IonButton,
         LMap,
@@ -161,11 +167,7 @@ export default defineComponent({
         checkData(data) {
             console.log(data)
         },
-        viewCart() {
-            // this.$store.dispatch("GET_CART").then((response) => {
-            //     console.log(this.CART)
-            // });
-        },
+       
         async go(item, index) {
             this.pin = index;
             const buttonRef = this.$refs.myButton;
@@ -182,31 +184,22 @@ export default defineComponent({
                 return branch.latitude === item[0] && branch.longitude === item[1];
             });
             this.$store.commit('SELECTED_STORE', matchingBranch)
-        },
-        getTooltipContent(item) {
-            const matchingBranch = this.STORES.find((branch) => {
-                return branch.latitude === item[0] && branch.longitude === item[1];
-            });
-            let details = `
-            <div>
-            <center><strong style='color:#eb8f34;'>${matchingBranch.name}</strong></center><br>
-            <center><style='color:#eb8f34;'>
-          `;
-            for (let i = 0; i < matchingBranch.store_type_details.length; i++) {
-                if (i == matchingBranch.store_type_details.length - 1) {
-                    details += `${matchingBranch.store_type_details[i].name}`;
-                }
-                else {
-                    details += `${matchingBranch.store_type_details[i].name},`;
-                }
-            }
-            details += `</center></div>`
-            return details
+            this.routingOptions.waypoints[1] = [matchingBranch.latitude,matchingBranch.longitude]
         },
     },
 
     data() {
         return {
+            routingOptions: {
+                waypoints: [
+                    [null,null]
+                    [null,null]
+                ],
+                lineOptions: {
+                    styles: [{ color: 'blue', opacity: 1, weight: 5 }]
+                },
+                createMarker: false
+            },
             cart,
             pin: null,
             selectedMarker: L.icon({
@@ -252,42 +245,30 @@ export default defineComponent({
         };
     },
 
-    // beforeDestroy(){
-    //     console.log('before destroy')
-    // }
 
-    // async mounted() {
-
-    //     // await new Promise((resolve) => setTimeout(resolve, 3000));
-    //     // this.lmapShow = false
-    //     // console.log(this.$refs.mapRef)
-    //     // const map = this.$refs.mapRef.mapObject; // Accessing the Leaflet map instance
-    //     // // map.remove(); // Destroy the Leaflet map
-    //     // this.$refs.mapRef.mapObject = null;
-    // },
-    // destroyed(){
-    //     console.log('destroy')
-    //     this.lmapShow = false
-    // },
+    async mounted() {
+        await new Promise((resolve) => setTimeout(resolve, 1500));
+        this.routingOptions.waypoints[0] = this.MARKER_LAT_LNG
+    },
 
     setup() {
         const lmapShow = ref(true);
-        // onMounted(() => {
-        //     // Initialize the Leaflet map here if needed
-        //     console.log('mounted')
-        // });
+        const mapRef = ref(true);
+        onMounted(() => {
+            
+        });
 
         onBeforeUnmount(() => {
-            // console.log('before unmounted')
             // lmapShow.value = false
         });
 
         return {
-            lmapShow
+            lmapShow,
+            mapRef,
         };
     },
 
-});
+};
 </script>
 <style>
 .buttons {
@@ -295,7 +276,12 @@ export default defineComponent({
     position: absolute;
     z-index: 401;
 }
+
 .leaflet-control-attribution.leaflet-control {
     display: none;
+}
+
+.leaflet-routing-container {
+    display: none !important;
 }
 </style>

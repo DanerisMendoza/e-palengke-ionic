@@ -53,12 +53,12 @@ const routes: Array<RouteRecordRaw> = [
     component: StoreOrders,
     meta: { requiresAuth: true },
   },
-  {
-    path: '/TEST',
-    name: 'TEST',
-    component: TEST,
-    meta: { requiresAuth: true }, 
-  },
+  // {
+  //   path: '/TEST',
+  //   name: 'TEST',
+  //   component: TEST,
+  //   meta: { requiresAuth: null }, 
+  // },
   {
     path: '/TESTCAMERA',
     name: 'TESTCAMERA',
