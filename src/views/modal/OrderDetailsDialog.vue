@@ -78,20 +78,15 @@
               <p>Total: <strong>₱{{ total }}</strong></p>
             </ion-col>
           </ion-row>
-          <ion-row>
-            <div v-if="route.name === 'STORE ORDERS'">
-              <ion-col size="6" v-if="ORDER_DETAILS[0]?.status == 'Pending'">
-                <ion-button :strong="true" fill="solid" color="danger" @click="DECLINE_ORDER">Decline Order</ion-button>
-              </ion-col>
-              <ion-col size="6" v-if="ORDER_DETAILS[0]?.status == 'Pending'">
-                <ion-button :strong="true" fill="solid" color="success" @click="ACCEPT_ORDER">Accept Order</ion-button>
-              </ion-col>
-              <ion-col size="12" v-if="ORDER_DETAILS[0]?.status == 'Preparing'">
-                <ion-button :strong="true" fill="solid" color="success" @click="ORDER_TO_SHIP">SHIP</ion-button>
-              </ion-col>
-            </div>
-          </ion-row>
         </ion-grid>
+        <div v-if="route.name === 'STORE ORDERS'" style="display: flex; justify-content: space-between;">
+          <ion-button v-if="ORDER_DETAILS[0]?.status == 'Pending'" :strong="true" fill="solid" color="danger"
+            @click="DECLINE_ORDER" style="flex-grow: 1;">Decline Order</ion-button>
+          <ion-button v-if="ORDER_DETAILS[0]?.status == 'Pending'" :strong="true" fill="solid" color="success"
+            @click="ACCEPT_ORDER" style="flex-grow: 1;">Accept Order</ion-button>
+          <ion-button v-if="ORDER_DETAILS[0]?.status == 'Preparing'" :strong="true" fill="solid" color="success"
+            @click="ORDER_TO_SHIP" style="flex-grow: 1;" expand="block">SHIP</ion-button>
+        </div>
       </ion-toolbar>
     </ion-footer>
   </ion-modal>
