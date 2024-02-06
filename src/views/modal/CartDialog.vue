@@ -9,6 +9,7 @@
             </ion-toolbar>
         </ion-header>
         <ion-content class="ion-padding">
+            <ion-loading :is-open="isLoading"  message="Order Processing..."> </ion-loading>
             <ion-list>
                 <ion-grid v-for="item in CART">
                     <ion-card style="margin: 0%;">
@@ -74,7 +75,7 @@
 </template>
 
 <script  >
-import { IonTabs, IonTabBar, IonTabButton, IonCheckbox, IonItemDivider, IonFooter, IonCol, IonGrid, IonRow, IonHeader, IonToolbar, IonButtons, IonTitle, IonInput, IonCard, IonCardHeader, IonCardTitle, IonCardSubtitle, IonCardContent, IonButton, IonModal, IonContent, IonIcon, IonItem, IonList, IonImg, IonLabel, IonSearchbar, IonChip, IonAccordion, IonAccordionGroup } from '@ionic/vue';
+import { IonLoading , IonTabs, IonTabBar, IonTabButton, IonCheckbox, IonItemDivider, IonFooter, IonCol, IonGrid, IonRow, IonHeader, IonToolbar, IonButtons, IonTitle, IonInput, IonCard, IonCardHeader, IonCardTitle, IonCardSubtitle, IonCardContent, IonButton, IonModal, IonContent, IonIcon, IonItem, IonList, IonImg, IonLabel, IonSearchbar, IonChip, IonAccordion, IonAccordionGroup } from '@ionic/vue';
 import { ref, onMounted, defineComponent } from 'vue';
 import { mapGetters } from "vuex";
 import { arrowBack, cart, time, alert } from 'ionicons/icons';
@@ -82,7 +83,7 @@ import { alertController } from '@ionic/vue';
 
 export default defineComponent({
     components: {
-        IonTabs, IonTabBar, IonTabButton, IonCheckbox, IonItemDivider, IonIcon, IonFooter, IonCol, IonGrid, IonRow, IonHeader, IonToolbar, IonButtons, IonTitle, IonInput, IonCard, IonCardHeader, IonCardTitle, IonCardSubtitle, IonCardContent, IonButton, IonModal, IonContent, IonIcon, IonItem, IonList, IonImg, IonLabel, IonSearchbar, IonChip, IonAccordion, IonAccordionGroup
+        IonLoading, IonTabs, IonTabBar, IonTabButton, IonCheckbox, IonItemDivider, IonIcon, IonFooter, IonCol, IonGrid, IonRow, IonHeader, IonToolbar, IonButtons, IonTitle, IonInput, IonCard, IonCardHeader, IonCardTitle, IonCardSubtitle, IonCardContent, IonButton, IonModal, IonContent, IonIcon, IonItem, IonList, IonImg, IonLabel, IonSearchbar, IonChip, IonAccordion, IonAccordionGroup
     },
     methods: {
         itemIsCheck() {
@@ -151,7 +152,6 @@ export default defineComponent({
         },
         async checkout() {
             const cartLocal = this.CART.filter((item) => { return item.isCheck === true });
-            console.log(cartLocal)
             if (cartLocal.length <= 0) {
                 return
             }
@@ -180,7 +180,9 @@ export default defineComponent({
                 status: "pending",
                 total: this.total,
             };
+            this.isLoading = true
             this.$store.dispatch("ORDER", payload).then(async (response) => {
+                this.isLoading = false
                 if (response == "invalid") {
                     const alert = await alertController.create({
                         header: 'Warning',
@@ -206,7 +208,7 @@ export default defineComponent({
                     await alert.present();
                 }
                 this.fetchItems()
-                this.$store.dispatch("GetUserDetails");
+                this.$store.dispatch("GetUserDetails")
             });
         }
     },
@@ -227,7 +229,8 @@ export default defineComponent({
     data() {
         return {
             arrowBack,
-            all: false
+            all: false,
+            isLoading:false,
         }
     },
     mounted() {
