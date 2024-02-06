@@ -148,6 +148,7 @@ export default defineComponent({
             })
         },
         onPresent() {
+            this.all = false
             this.fetchItems()
         },
         async checkout() {
