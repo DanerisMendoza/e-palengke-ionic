@@ -8,7 +8,7 @@
                 <ion-card-content>
                     <ion-list>
                         <ion-list-header>New Order Incoming</ion-list-header>
-                        <ion-item>
+                        <ion-item lines="none">
                             <ion-label>
                                 <h3>Customer Name: {{ TRANSACTION[0]?.customer_name }}</h3>
                                 <h3>Customer Address: {{ TRANSACTION[0]?.customer_address }}</h3>
@@ -17,20 +17,21 @@
                             </ion-label>
                         </ion-item>
                     </ion-list>
-                    <ion-item-divider></ion-item-divider>
-                    <ion-list v-for="(item, index) in TRANSACTION[0]?.orders" :key="index">
-                        <ion-item>
-                            <ion-label>Store Name: {{ item.name }}</ion-label>
+                  
+                    <ion-list>
+                        <ion-item lines="none">
+                            <ion-label>
+                                <div v-for="(item, index) in TRANSACTION[0]?.orders" :key="index">
+                                    <h3>Store Name: {{ item.name }}</h3>
+                                    <h3>Store Address: {{ item.address }}</h3>
+                                    <h3>Store Name: {{ item.name }}</h3>
+                                    <div v-for="(item2, index2) in item.order_details" :key="index2">
+                                        <h3>  {{ item2.quantity }} {{ item2.name }} ₱{{ item2.price }}</h3>
+                                    </div>
+                                    <br>
+                                </div>
+                            </ion-label>
                         </ion-item>
-                        <ion-item>
-                            <ion-label>Store Address: {{ item.address }}</ion-label>
-                        </ion-item>
-                        <ion-list v-for="(item2, index2) in item.order_details" :key="index2">
-                            <ion-item>
-                                {{ item2.quantity }} {{ item2.name }} ₱{{ item2.price }}
-                            </ion-item>
-                        </ion-list>
-                        <ion-item-divider v-if="TRANSACTION[0].orders.length != (index + 1)"></ion-item-divider>
                     </ion-list>
                 </ion-card-content>
             </ion-card>
@@ -75,12 +76,13 @@
                     </ion-row>
                     <ion-row v-else-if="TRANSACTION[0]?.status == 'To Pickup'">
                         <ion-col size="12">
-                            <ion-button :strong="true" fill="solid" @click="PICKUP_ORDERS">Pickup</ion-button>
+                            <ion-button :strong="true" fill="solid" @click="PICKUP_ORDERS"
+                                expand="block">Pickup</ion-button>
                         </ion-col>
                     </ion-row>
                     <ion-row v-else-if="TRANSACTION[0]?.status == 'Picked up'">
                         <ion-col size="12">
-                            <ion-button :strong="true" fill="solid" @click="DROP_OFF">Drop off</ion-button>
+                            <ion-button :strong="true" fill="solid" @click="DROP_OFF" expand="block">Drop off</ion-button>
                         </ion-col>
                     </ion-row>
                 </ion-grid>
