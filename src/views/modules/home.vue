@@ -26,9 +26,9 @@
       <p class="ion-padding-start ion-padding-top"> Store type</p>
       <swiper-container slides-per-view="4" loop="true" :autoplay="{ delay: 4000 }" :spaceBetween="50">
         <swiper-slide class="ion-padding-start"
-          v-for="(item, index) in ['Grocery', 'Clothing', 'Electronics', 'Bookstore', 'Hardware', 'Pharmacy']" :key="index">
-          <ion-chip color="primary">
-            {{ item }}
+          v-for="(item, index) in STORE_TYPE_DETAIL" :key="index">
+          <ion-chip color="primary" @click="goToStoreWithFilter(item)">
+            {{ item.name }}
           </ion-chip>
         </swiper-slide>
       </swiper-container>
@@ -62,9 +62,20 @@ const store = useStore();
 const deliveryImages = [delivery1, delivery2, delivery3, delivery4, delivery5];
 const USER_DETAILS = computed(() => store.getters.USER_DETAILS);
 const PRODUCT_TYPE_DETAIL = computed(() => store.getters.PRODUCT_TYPE_DETAIL);
-console.log(USER_DETAILS)
+const STORE_TYPE_DETAIL = computed(() => store.getters.STORE_TYPE_DETAIL);
+const STORE_TYPE_FILTER = computed(() => store.getters.STORE_TYPE_FILTER);
+const ionRouter = useIonRouter();
+// console.log(USER_DETAILS)
 store.dispatch('GET_PRODUCT_TYPE_DETAIL').then((response:any)=>{
-  console.log(response)
+  // console.log(response)
 })
+store.dispatch('GET_STORE_TYPE_DETAIL').then((response:any)=>{
+  // console.log(response)
+})
+
+const goToStoreWithFilter = (item:any) => {
+  store.commit('STORE_TYPE_FILTER',item.name)
+  ionRouter.replace('/STORE');
+}
 </script>
 

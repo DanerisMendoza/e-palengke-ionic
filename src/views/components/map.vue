@@ -4,17 +4,27 @@
     <ion-button v-if="sidenavViewer === 'store'" ref="myButton" id="open-modal" expand="block"
         v-show="isButtonVisible"></ion-button>
     <CartDialog v-if="sidenavViewer === 'store'" />
-    <ion-button v-if="sidenavViewer === 'store'" id="CartButton" color="primary" class="buttons" >
+    <ion-list v-if="sidenavViewer === 'store'" class="ionList">
+        <ion-item lines="none">
+            <ion-select :selectedText="STORE_TYPE_FILTER" @ionChange="selectChange($event.detail.value)">
+                <ion-select-option>All</ion-select-option>
+                <template v-for="(item, index) in STORE_TYPE_DETAIL">
+                    <ion-select-option :value="item.name">{{ item.name }}</ion-select-option>
+                </template>
+            </ion-select>
+        </ion-item>
+    </ion-list>
+    <ion-button v-if="sidenavViewer === 'store'" id="CartButton" color="primary" class="buttons">
         <ion-icon :icon="cart"></ion-icon>
     </ion-button>
     <!-- leaflet map -->
-    <l-map ref="mapRef" :zoom="zoom" :center="center" id="leafletMap"  :style="mapStyle">
+    <l-map ref="mapRef" :zoom="zoom" :center="center" id="leafletMap" :style="mapStyle">
         <!-- <l-tile-layer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" name="OpenStreetMap"></l-tile-layer> -->
         <l-tile-layer url='https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png'></l-tile-layer>
         <!-- <l-tile-layer :url="googleStreets.url" :maxZoom="googleStreets.maxZoom"
             :subdomains="googleStreets.subdomains"></l-tile-layer> -->
         <!-- current marker(dynamic icon) -->
-        <LRoutingMachine v-bind="routingOptions" v-if="sidenavViewer === 'store'"/>
+        <LRoutingMachine v-bind="routingOptions" v-if="sidenavViewer === 'store'" />
         <l-marker v-if="MARKER_LAT_LNG !== null" :lat-lng="MARKER_LAT_LNG" :icon="computedMarker"></l-marker>
         <!-- multiple marker(stores) -->
         <l-marker v-if="sidenavViewer === 'store'" v-for="(item, index) in storeMarkersInsideCircle" :key="index"
@@ -35,7 +45,7 @@
   
 <script >
 import { defineComponent, onMounted, onBeforeUnmount, ref, reactive } from 'vue';
-import { IonModal, IonContent, IonHeader, IonPage, IonTitle, IonToolbar, IonItem, IonInput, IonButton, useIonRouter, IonIcon, } from '@ionic/vue';
+import { IonList, IonSelect, IonSelectOption, IonModal, IonContent, IonHeader, IonPage, IonTitle, IonToolbar, IonItem, IonInput, IonButton, useIonRouter, IonIcon, } from '@ionic/vue';
 import { LMap, LTileLayer, LMarker, LIcon, LCircle, LTooltip, LPopup, LControlZoom } from "@vue-leaflet/vue-leaflet";
 import L from 'leaflet';
 import { mapGetters } from 'vuex';
@@ -53,6 +63,7 @@ import LRoutingMachine from "./LRoutingMachine.vue";
 
 export default {
     components: {
+        IonList, IonItem, IonSelect, IonSelectOption,
         LRoutingMachine,
         ProductCustomerViewDialog,
         IonContent, IonHeader, IonPage, IonTitle, IonToolbar, IonButton,
@@ -90,6 +101,9 @@ export default {
             "TRANSACTION",
             "ORDER_STORE_LAT_LNG",
             "SELECTED_STORE",
+            "STORE_TYPE_DETAIL",
+            "STORE",
+            "STORE_TYPE_FILTER",
         ]),
 
         mapStyle() {
@@ -157,17 +171,40 @@ export default {
                 // console.log(val[0])
                 // console.log(this.STORES_LAT_LNG)
             },
-        }
+        },
+        STORE_TYPE_FILTER: {
+            handler(val) {
+                if (val != 'All') {
+                    const filterVal = this.STORES.filter(store => {
+                        return store.store_type_details.some((detail) => detail.name === val);
+                    });
+                    const latLngArr = filterVal.map((item) => {
+                        return [item.latitude, item.longitude];
+                    });
+                    this.$store.commit("STORES_LAT_LNG", latLngArr);
+                }
+                else {
+                    const latLngArr = this.STORES.map(item => {
+                        return [item.latitude, item.longitude];
+                    });
+                    this.$store.commit("STORES_LAT_LNG", latLngArr);
+                }
+            },
+        },
     },
 
     methods: {
+        selectChange(data) {
+            this.$store.commit('STORE_TYPE_FILTER', data)
+        },
+
         isMarkerSelected(marker, index) {
             return index === this.pin ? this.selectedMarker : this.sellerMarker
         },
         checkData(data) {
             console.log(data)
         },
-       
+
         async go(item, index) {
             this.pin = index;
             const buttonRef = this.$refs.myButton;
@@ -184,7 +221,7 @@ export default {
                 return branch.latitude === item[0] && branch.longitude === item[1];
             });
             this.$store.commit('SELECTED_STORE', matchingBranch)
-            this.routingOptions.waypoints[1] = [matchingBranch.latitude,matchingBranch.longitude]
+            this.routingOptions.waypoints[1] = [matchingBranch.latitude, matchingBranch.longitude]
         },
     },
 
@@ -192,8 +229,8 @@ export default {
         return {
             routingOptions: {
                 waypoints: [
-                    [null,null]
-                    [null,null]
+                    [null, null]
+                    [null, null]
                 ],
                 lineOptions: {
                     styles: [{ color: 'blue', opacity: 1, weight: 5 }]
@@ -248,6 +285,9 @@ export default {
 
     async mounted() {
         await new Promise((resolve) => setTimeout(resolve, 1500));
+        await this.$store.dispatch('GET_STORE_TYPE_DETAIL').then((response) => {
+            // console.log(response)
+        })
         this.routingOptions.waypoints[0] = this.MARKER_LAT_LNG
     },
 
@@ -255,7 +295,7 @@ export default {
         const lmapShow = ref(true);
         const mapRef = ref(true);
         onMounted(() => {
-            
+
         });
 
         onBeforeUnmount(() => {
@@ -271,6 +311,18 @@ export default {
 };
 </script>
 <style>
+.ionList {
+    position: absolute;
+    z-index: 401;
+    border-radius: 15px;
+    /* Adjust the value to change the roundness */
+    overflow: hidden;
+    opacity: 85%;
+    top: 1%;
+    left: 50%;
+    transform: translate(-50%);
+}
+
 .buttons {
     right: 1%;
     position: absolute;
