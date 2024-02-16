@@ -165,6 +165,15 @@ export default {
                 });
             })
         },
+        COMPLETE_ORDER({ commit }, payload) {
+            return new Promise((resolve, reject) => {
+                api.post('api/COMPLETE_ORDER', payload).then((response) => {
+                    resolve(response.data)
+                }).catch((error) => {
+                    reject(error)
+                });
+            })
+        },
         GET_ORDERS_BY_STORE_ID({ commit }, payload) {
             return new Promise((resolve, reject) => {
                 api.get(`api/GET_ORDERS_BY_STORE_ID/${payload}`).then((response) => {

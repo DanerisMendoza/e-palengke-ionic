@@ -87,6 +87,12 @@
           <ion-button v-if="ORDER_DETAILS[0]?.status == 'Preparing'" :strong="true" fill="solid" color="success"
             @click="ORDER_TO_SHIP" style="flex-grow: 1;" expand="block">SHIP</ion-button>
         </div>
+        <div v-if="route.name === 'CUSTOMER ORDERS'" style="display: flex; justify-content: space-between;">
+          <ion-button v-if="ORDER_DETAILS[0]?.status == 'Pending'" :strong="true" fill="solid" color="danger"
+            @click="CANCEL_ORDER" style="flex-grow: 1;" expand="block">Cancel</ion-button>
+          <ion-button v-if="ORDER_DETAILS[0]?.status == 'Received'" :strong="true" fill="solid" color="success"
+            @click="COMPLETE_ORDER" style="flex-grow: 1;" expand="block">COMPLETE</ion-button>
+        </div>
       </ion-toolbar>
     </ion-footer>
   </ion-modal>
@@ -157,6 +163,10 @@ const initWebsocketsPusher = async () => {
   channel.bind('OrderDetailsEvent', () => {
     fetchOrderDetails()
   });
+  const channel2 = pusher.subscribe('channel-TransactionEvent' + USER_DETAILS.value.user_id);
+  channel2.bind('TransactionEvent', (response: any) => {
+    console.log(response)
+  });
 }
 
 const fetchOrderDetails = () => {
@@ -167,8 +177,6 @@ const fetchOrderDetails = () => {
     }
   }
   store.dispatch('GET_ORDER_DETAILS', payload).then(() => {
-    // console.log(SELECTED_ORDER_DETAILS)
-    // console.log(ORDER_DETAILS)
     selectedSegmentOrigin.value = ORDER_DETAILS.value[0]?.status
     selectedSegment.value = selectedSegmentOrigin.value
   })
@@ -191,6 +199,45 @@ const ACCEPT_ORDER = async () => {
       const alert = await alertController.create({
         header: 'Success',
         message: 'Order Accept Success',
+        buttons: ['OK'],
+      });
+      alert.present()
+    }
+  })
+}
+
+const COMPLETE_ORDER = async () => {
+  const item = SELECTED_ORDER_DETAILS.value
+  const payload = {
+    customer_id: item.customer_id,
+    order_id: item.order_id
+  }
+
+  await store.dispatch('COMPLETE_ORDER', payload).then(async (response) => {
+    if (response === 'success') {
+      fetchOrderDetails()
+      store.commit('IS_ORDERS_CHANGE', true)
+      const alert = await alertController.create({
+        header: 'Success',
+        message: 'Order Accept Success',
+        buttons: ['OK'],
+      });
+      alert.present()
+    }
+  })
+}
+
+const CANCEL_ORDER = () => {
+  const item = SELECTED_ORDER_DETAILS.value
+  const payload = { order_id: item.order_id }
+  store.dispatch('CANCEL_ORDER', payload).then(async (response) => {
+    if (response === 'success') {
+      cancel()
+      store.commit('IS_ORDERS_CHANGE', true)
+      store.dispatch("GetUserDetails")
+      const alert = await alertController.create({
+        header: 'Success',
+        message: 'Cancel Order Success',
         buttons: ['OK'],
       });
       alert.present()
