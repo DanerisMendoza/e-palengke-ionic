@@ -27,12 +27,12 @@
         <LRoutingMachine v-bind="routingOptions" v-if="sidenavViewer === 'store'" />
         <l-marker v-if="MARKER_LAT_LNG !== null" :lat-lng="MARKER_LAT_LNG" :icon="computedMarker"></l-marker>
         <!-- multiple marker(stores) -->
-        <l-marker v-if="sidenavViewer === 'store'" v-for="(item, index) in storeMarkersInsideCircle" :key="index"
+        <l-marker v-if="sidenavViewer === 'store'" v-for="(item, index) in storeMarkersInsideCircle" :key="item"
             :lat-lng="item" :icon="isMarkerSelected(item, index)" @click="go(item, index)">
         </l-marker>
         <!-- multiple marker(delivery) -->
         <l-marker v-if="sidenavViewer === 'delivery' && TRANSACTION.length != 0"
-            v-for="(item, index) in ORDER_STORE_LAT_LNG" ref="markers" :key="index"
+            v-for="(item, index) in ORDER_STORE_LAT_LNG" ref="markers" :key="item"
             :lat-lng="{ lat: item.latitude, lng: item.longitude }" :icon="sellerMarker">
         </l-marker>
 
@@ -196,6 +196,7 @@ export default {
     methods: {
         selectChange(data) {
             this.$store.commit('STORE_TYPE_FILTER', data)
+            this.pin = null;
         },
 
         isMarkerSelected(marker, index) {

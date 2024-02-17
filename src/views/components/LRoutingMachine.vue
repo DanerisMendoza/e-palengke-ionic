@@ -28,6 +28,7 @@ export default {
     const { routing } = WINDOW_OR_GLOBAL.L
     const { listeners } = remapEvents(context.attrs);
     const SELECTED_STORE = computed(() => store.getters.SELECTED_STORE);
+    const STORE_TYPE_FILTER = computed(() => store.getters.STORE_TYPE_FILTER);
     const store = useStore();
 
     onMounted(async () => {
@@ -43,14 +44,21 @@ export default {
       // nextTick(() => context.emit("ready", leafletObject.value));
     });
 
-    watch(() => SELECTED_STORE.value, (newRoute, oldRoute) => {
+    watch(() => STORE_TYPE_FILTER.value, (newVal, oldVal) => {
       if (leafletObject.value) {
-        console.log(leafletObject.value)
+        leafletObject.value.setWaypoints([]);
+        leafletObject.value.remove();
+      }
+    });
+
+    watch(() => SELECTED_STORE.value, (newVal, oldVal) => {
+      if (leafletObject.value) {
+        // console.log(leafletObject.value)
         leafletObject.value.setWaypoints([]);
         leafletObject.value.remove();
       }
       options.createMarker = () => { };
-      console.log(options)
+      // console.log(options)
       leafletObject.value = markRaw(routing.control(options));
       leafletObject.value.on(listeners);      
       propsBinder(methods, leafletObject.value, props);
