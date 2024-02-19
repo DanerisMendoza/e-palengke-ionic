@@ -31,45 +31,38 @@ export default {
     const STORE_TYPE_FILTER = computed(() => store.getters.STORE_TYPE_FILTER);
     const store = useStore();
 
-    onMounted(async () => {
-
-      // Set createMarker to empty function to prevent marker creation
-      // options.createMarker = () => { };
-
-      // leafletObject.value = markRaw(routing.control(options));
-      // leafletObject.value.on(listeners);
-
-      // propsBinder(methods, leafletObject.value, props);
-      // registerControl({ leafletObject: leafletObject.value });
-      // nextTick(() => context.emit("ready", leafletObject.value));
-    });
+    const clear = () => {
+      leafletObject.value.setWaypoints([]);
+      leafletObject.value.remove();
+    }
 
     watch(() => STORE_TYPE_FILTER.value, (newVal, oldVal) => {
       if (leafletObject.value) {
-        leafletObject.value.setWaypoints([]);
-        leafletObject.value.remove();
+        clear()
       }
     });
 
     watch(() => SELECTED_STORE.value, (newVal, oldVal) => {
-      if (newVal == null) {
-        leafletObject.value.setWaypoints([]);
-        leafletObject.value.remove();
-      }
-      else{
-        options.createMarker = () => { };
-        leafletObject.value = markRaw(routing.control(options));
-        leafletObject.value.on(listeners);      
-        propsBinder(methods, leafletObject.value, props);
-        registerControl({ leafletObject: leafletObject.value });
-        nextTick(() => context.emit("ready", leafletObject.value));
-      }
-    });
-
-    onBeforeUnmount(() => {
       if (leafletObject.value) {
         leafletObject.value.setWaypoints([]);
         leafletObject.value.remove();
+      }
+      options.createMarker = () => { };
+      leafletObject.value = markRaw(routing.control(options));
+      leafletObject.value.on(listeners);
+      propsBinder(methods, leafletObject.value, props);
+      registerControl({ leafletObject: leafletObject.value });
+      nextTick(() => context.emit("ready", leafletObject.value));
+      if (newVal == null) {
+        clear()
+      }
+    });
+
+
+
+    onBeforeUnmount(() => {
+      if (leafletObject.value) {
+        clear()
       }
     });
   },
