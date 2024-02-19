@@ -196,6 +196,7 @@ export default {
     methods: {
         selectChange(data) {
             this.$store.commit('STORE_TYPE_FILTER', data)
+            this.$store.commit('SELECTED_STORE', null)
             this.pin = null;
         },
 

@@ -52,18 +52,18 @@ export default {
     });
 
     watch(() => SELECTED_STORE.value, (newVal, oldVal) => {
-      if (leafletObject.value) {
-        // console.log(leafletObject.value)
+      if (newVal == null) {
         leafletObject.value.setWaypoints([]);
         leafletObject.value.remove();
       }
-      options.createMarker = () => { };
-      // console.log(options)
-      leafletObject.value = markRaw(routing.control(options));
-      leafletObject.value.on(listeners);      
-      propsBinder(methods, leafletObject.value, props);
-      registerControl({ leafletObject: leafletObject.value });
-      nextTick(() => context.emit("ready", leafletObject.value));
+      else{
+        options.createMarker = () => { };
+        leafletObject.value = markRaw(routing.control(options));
+        leafletObject.value.on(listeners);      
+        propsBinder(methods, leafletObject.value, props);
+        registerControl({ leafletObject: leafletObject.value });
+        nextTick(() => context.emit("ready", leafletObject.value));
+      }
     });
 
     onBeforeUnmount(() => {
