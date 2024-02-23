@@ -1,6 +1,6 @@
 <template>
   <ion-modal :is-open="ORDER_DETAILS_DIALOG" @willPresent="onPresent" @didDismiss="onClose">
-    <ion-header>
+    <ion-header v-if="menuVal == false">
       <ion-toolbar color="primary">
         <ion-button @click="cancel()" fill="clear" slot="start">
           <ion-icon :icon="arrowBack" color="light"></ion-icon>
@@ -17,8 +17,8 @@
             <!-- </center> -->
           </ion-col>
           <ion-col size="2">
-            <ion-button @click="track()">
-              <ion-icon :icon="mapOutline"></ion-icon>
+            <ion-button v-if="SELECTED_ORDER_DETAILS.delivery_id != null" @click="track()">
+              <ion-icon :icon="bicycleOutline"></ion-icon>
             </ion-button>
           </ion-col>
           <ion-col size="12">
@@ -46,6 +46,36 @@
         </ion-row>
       </ion-grid>
 
+      <ion-menu @ionWillClose="() => menuVal = false" side="end" content-id="main-content">
+        <ion-header>
+          <ion-toolbar color="primary">
+            <ion-button @click="closeMenu()" fill="clear" slot="start">
+              <ion-icon :icon="arrowBack" color="light"></ion-icon>
+            </ion-button>
+            <ion-title>DELIVERY DETAILS</ion-title>
+          </ion-toolbar>
+        </ion-header>
+        <ion-content class="ion-padding">
+          <ion-card v-if="DELIVERY_PERSON_DETAILS != null">
+            <ion-card-content>
+              <ion-list>
+                <ion-item lines="none" style="translate: -35%;">
+                  <img :src="DELIVERY_PERSON_DETAILS.base64img" slot="end" alt="" width="50"  />
+                </ion-item>
+                <ion-item lines="none">
+                  <ion-label size="12">Name: {{ DELIVERY_PERSON_DETAILS.name }}</ion-label>
+                </ion-item>
+                <ion-item lines="none">
+                  <ion-label size="12">Contact: {{ DELIVERY_PERSON_DETAILS.phone_number }}</ion-label>
+                </ion-item>
+                <ion-item lines="none">
+                  <ion-label size="12">Gender: {{ DELIVERY_PERSON_DETAILS.gender }}</ion-label>
+                </ion-item>
+              </ion-list>
+            </ion-card-content>
+          </ion-card>
+        </ion-content>
+      </ion-menu>
 
       <ion-card v-for="item in ORDER_DETAILS">
         <ion-card-content>
@@ -69,7 +99,7 @@
         </ion-card-content>
       </ion-card>
     </ion-content>
-    <ion-footer>
+    <ion-footer v-if="menuVal == false">
       <ion-toolbar>
         <ion-grid>
           <ion-row class="ion-align-items-center ">
@@ -99,16 +129,16 @@
 </template>
   
 <script setup lang="ts">
-import { alertController, IonLabel, IonFooter, IonCol, IonRow, IonGrid, IonList, IonCardContent, IonModal, IonCard, IonButtons, IonMenuToggle, IonIcon, IonContent, IonHeader, IonPage, IonTitle, IonToolbar, IonItem, IonInput, IonButton } from '@ionic/vue';
+import { IonMenuButton, IonMenu, alertController, IonLabel, IonFooter, IonCol, IonRow, IonGrid, IonList, IonCardContent, IonModal, IonCard, IonButtons, IonMenuToggle, IonIcon, IonContent, IonHeader, IonPage, IonTitle, IonToolbar, IonItem, IonInput, IonButton } from '@ionic/vue';
 import { menu } from 'ionicons/icons';
 import Toolbar from "@/views/components/toolbar.vue";
 import { bagAddOutline, mapOutline, bagHandleOutline, clipboardOutline, arrowBack, cart, time, alert, timeOutline, cubeOutline, bagCheckOutline, checkmarkDoneOutline } from 'ionicons/icons';
-import { ref, onMounted, computed } from 'vue';
+import { ref, onMounted, computed, watch } from 'vue';
 import { useStore } from 'vuex';
 import { useRoute } from 'vue-router';
 import moment from 'moment';
-import { IonSegment, IonSegmentButton } from '@ionic/vue';
-import { home, heart, pin, star, call, globe, basket, barbell, trash, person } from 'ionicons/icons'
+import { menuController, IonSegment, IonSegmentButton } from '@ionic/vue';
+import { bicycleOutline, home, heart, pin, star, call, globe, basket, barbell, trash, person } from 'ionicons/icons'
 import { Toast } from '@capacitor/toast';
 
 const route = useRoute();
@@ -117,20 +147,24 @@ const USER_DETAILS = computed(() => store.getters.USER_DETAILS);
 const ORDER_DETAILS_DIALOG = computed(() => store.getters.ORDER_DETAILS_DIALOG);
 const SELECTED_ORDER_DETAILS: any = computed(() => store.getters.SELECTED_ORDER_DETAILS);
 const ORDER_DETAILS: any = computed(() => store.getters.ORDER_DETAILS);
+const DELIVERY_PERSON_DETAILS: any = computed(() => store.getters.DELIVERY_PERSON_DETAILS);
 const selectedSegment = ref("Pending");
 const selectedSegmentOrigin = ref("Pending");
 const prop = defineProps(['viewer']);
-// Toast.show({text: 'viewer: '+prop.viewer});
+const menuType = ref('push');
+const menuVal = ref(false)
+
 const total = computed(() => {
-  // Calculate the total based on the sum of subtotals in ORDER_DETAILS
   if (ORDER_DETAILS.value) {
     return ORDER_DETAILS.value.reduce((acc: number, item: any) => {
       return acc + item.price * item.quantity;
     }, 0);
   }
-  return 0; // Default value if ORDER_DETAILS is empty or undefined
+  return 0;
 });
+
 const onPresent = () => {
+  console.log(SELECTED_ORDER_DETAILS.value.delivery_id)
   fetchOrderDetails()
   // initWebsockets()
   initWebsocketsPusher()
@@ -139,8 +173,21 @@ const onClose = () => {
   store.commit('ORDER_DETAILS_DIALOG', false)
 }
 
-const track = () => {
 
+const closeMenu = async () => {
+  await menuController.close('end');
+}
+const track = async () => {
+  menuVal.value = true
+  const payload = {
+    params: {
+      user_id: SELECTED_ORDER_DETAILS.value.delivery_id
+    }
+  }
+  store.dispatch('GetUserDetailsById', payload).then((response: any) => {
+    console.log(DELIVERY_PERSON_DETAILS.value)
+  })
+  await menuController.open('end');
 }
 
 const segmentChange = () => {
@@ -165,7 +212,9 @@ const initWebsocketsPusher = async () => {
   });
   const channel2 = pusher.subscribe('channel-TransactionEvent' + USER_DETAILS.value.user_id);
   channel2.bind('TransactionEvent', (response: any) => {
-    console.log(response)
+    SELECTED_ORDER_DETAILS.value.delivery_id = response.delivery_id
+    store.commit('IS_ORDERS_CHANGE', true)
+    fetchOrderDetails()
   });
 }
 
@@ -319,5 +368,9 @@ ion-segment-button.ios::part(native) {
 
 ion-segment-button.ios::part(indicator-background) {
   border-radius: 20px;
+}
+
+ion-menu::part(container) {
+  --width: 100%
 }
 </style>

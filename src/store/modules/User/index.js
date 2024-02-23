@@ -8,6 +8,7 @@ export default {
     USER_DETAILS: { name: null },
     USER_INSIDE_RADIUS: [],
     PROFILE_PATH: null,
+    DELIVERY_PERSON_DETAILS: null,
   },
 
   getters: {
@@ -16,6 +17,7 @@ export default {
     USER_DETAILS: (state) => state.USER_DETAILS,
     USER_INSIDE_RADIUS: (state) => state.USER_INSIDE_RADIUS,
     PROFILE_PATH: (state) => state.PROFILE_PATH,
+    DELIVERY_PERSON_DETAILS: (state) => state.DELIVERY_PERSON_DETAILS,
   },
 
   mutations: {
@@ -24,9 +26,21 @@ export default {
     USER_DETAILS: (state, data) => { state.USER_DETAILS = data },
     USER_INSIDE_RADIUS: (state, data) => { state.USER_INSIDE_RADIUS = data },
     PROFILE_PATH: (state, data) => { state.PROFILE_PATH = data },
+    DELIVERY_PERSON_DETAILS: (state, data) => { state.DELIVERY_PERSON_DETAILS = data },
   },
 
   actions: {
+    GetUserDetailsById({ commit }, payload) {
+      return new Promise((resolve, reject) => {
+        api.get('api/GetUserDetailsById', payload).then((response) => {
+          commit('DELIVERY_PERSON_DETAILS', response.data)
+          resolve(response.data)
+        }).catch((error) => {
+          reject(error)
+        });
+      })
+    },
+
     GetUserDetails({ commit }) {
       return new Promise((resolve, reject) => {
         user.GetUserDetails().then((response) => {
