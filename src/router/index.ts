@@ -1,15 +1,5 @@
 import { createRouter, createWebHistory } from '@ionic/vue-router';
 import { RouteRecordRaw } from 'vue-router';
-import login from '../views/modules/login.vue';
-import home from '../views/modules/home.vue';
-import store from '../views/modules/store.vue';
-import delivery from '../views/modules/delivery.vue';
-import TEST from '../views/modules/test.vue';
-import TESTCAMERA from '../views/modules/TESTCAMERA.vue';
-import TESTGPS from '../views/modules/TESTGPS.vue';
-import TESTPUSHNOTIFICATION from '../views/modules/TESTPUSHNOTIFICATION.vue';
-import CustomerOrders from '../views/modules/children/CustomerOrders.vue';
-import StoreOrders from '../views/modules/children/StoreOrders.vue';
 import user from '@/api/modules/users/index'
 
 const routes: Array<RouteRecordRaw> = [
@@ -20,37 +10,37 @@ const routes: Array<RouteRecordRaw> = [
   {
     path: '/LOGIN',
     name: 'LOGIN',
-    component: login,
+    component: () => import('../views/modules/login.vue'),
     meta: { requiresAuth: false },
   },
   {
     path: '/HOME',
     name: 'HOME',
-    component: home,
+    component: () => import('../views/modules/home.vue'),
     meta: { requiresAuth: true }, 
   },
   {
     path: '/STORE',
     name: 'STORE',
-    component: store,
+    component: () => import('../views/modules/store.vue'),
     meta: { requiresAuth: true },
   },
   {
     path: '/DELIVERY',
     name: 'DELIVERY',
-    component: delivery,
+    component: () => import('../views/modules/delivery.vue'),
     meta: { requiresAuth: true },
   },
   {
     path: '/CUSTOMER%20ORDERS',
     name: 'CUSTOMER ORDERS',
-    component: CustomerOrders,
+    component: () => import('../views/modules/children/CustomerOrders.vue'),
     meta: { requiresAuth: true },
   },
   {
     path: '/STORE%20ORDERS',
     name: 'STORE ORDERS',
-    component: StoreOrders,
+    component: () => import('../views/modules/children/StoreOrders.vue'),
     meta: { requiresAuth: true },
   },
   // {
@@ -62,19 +52,19 @@ const routes: Array<RouteRecordRaw> = [
   {
     path: '/TESTCAMERA',
     name: 'TESTCAMERA',
-    component: TESTCAMERA,
+    component: () => import('../views/modules/TESTCAMERA.vue'),
     meta: { requiresAuth: null }, 
   },
   {
     path: '/TESTGPS',
     name: 'TESTGPS',
-    component: TESTGPS,
+    component: () => import('../views/modules/TESTGPS.vue'),
     meta: { requiresAuth: null }, 
   },
   {
     path: '/TESTPUSHNOTIF',
     name: 'TESTPUSHNOTIF',
-    component: TESTPUSHNOTIFICATION,
+    component: () => import('../views/modules/TESTPUSHNOTIFICATION.vue'),
     meta: { requiresAuth: null }, 
   },
 ];
