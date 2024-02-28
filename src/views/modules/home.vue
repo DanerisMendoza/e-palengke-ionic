@@ -35,7 +35,7 @@
       <p class="ion-padding-start ion-padding-top">Product type</p>
       <swiper-container slides-per-view="3" loop="true" :autoplay="{ delay: 3000 }">
         <swiper-slide class="ion-padding-start" v-for="(item, index) in PRODUCT_TYPE_DETAIL" :key="index">
-          <ion-chip color="primary">
+          <ion-chip color="primary" @click="goToProductWithFilter(item)">
             <img :src="item.base64img" alt="" style="height: 40px;" />
           </ion-chip>
         </swiper-slide>
@@ -76,6 +76,11 @@ store.dispatch('GET_STORE_TYPE_DETAIL').then((response:any)=>{
 const goToStoreWithFilter = (item:any) => {
   store.commit('STORE_TYPE_FILTER',item.name)
   ionRouter.replace('/STORE');
+}
+
+const goToProductWithFilter = (item:any) => {
+  store.commit('PRODUCT_TYPE_FILTER',item)
+  ionRouter.replace('/PRODUCTS');
 }
 </script>
 

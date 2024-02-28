@@ -1,4 +1,5 @@
 import Product from '@/api/modules/Product/index'
+import api from '@/api/index'
 
 export default {
     state: {
@@ -6,6 +7,7 @@ export default {
         PRODUCT_DIALOG: null,
         PRODUCT_TABLE_VIEWER: null,
         SELECTED_PRODUCT_DETAILS: null,
+        PRODUCT_TYPE_FILTER: null,
     },
     
     getters: {
@@ -13,6 +15,7 @@ export default {
         PRODUCT_DIALOG:(state) => state.PRODUCT_DIALOG,
         SELECTED_PRODUCT_DETAILS:(state) => state.SELECTED_PRODUCT_DETAILS,
         PRODUCT_TABLE_VIEWER:(state) => state.PRODUCT_TABLE_VIEWER,
+        PRODUCT_TYPE_FILTER:(state) => state.PRODUCT_TYPE_FILTER,
     },
 
     mutations: {
@@ -20,6 +23,7 @@ export default {
         PRODUCT_DIALOG:(state, data)=>{state.PRODUCT_DIALOG = data},
         SELECTED_PRODUCT_DETAILS:(state, data)=>{state.SELECTED_PRODUCT_DETAILS = data},
         PRODUCT_TABLE_VIEWER:(state, data)=>{state.PRODUCT_TABLE_VIEWER = data},
+        PRODUCT_TYPE_FILTER:(state, data)=>{state.PRODUCT_TYPE_FILTER = data},
     },
 
     actions: {
@@ -44,6 +48,16 @@ export default {
         GET_PRODUCT_BY_ID({commit},payload){
             return new Promise((resolve,reject)=>{
                 Product.GET_PRODUCT_BY_ID(payload).then((response)=>{
+                commit('PRODUCT',response.data)
+                resolve(response.data)
+            }).catch((error)=>{
+                  reject(error)
+                });
+            })
+        },
+        GET_PRODUCT_BY_TYPE({commit},payload){
+            return new Promise((resolve,reject)=>{
+                api.get('api/GetProductByType', payload).then((response) => {
                 commit('PRODUCT',response.data)
                 resolve(response.data)
             }).catch((error)=>{

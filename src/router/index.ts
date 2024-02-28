@@ -43,6 +43,12 @@ const routes: Array<RouteRecordRaw> = [
     component: () => import('../views/modules/children/StoreOrders.vue'),
     meta: { requiresAuth: true },
   },
+  {
+    path: '/PRODUCTS',
+    name: 'PRODUCTS',
+    component: () => import('../views/modules/products.vue'),
+    meta: { requiresAuth: null },
+  },
   // {
   //   path: '/TEST',
   //   name: 'TEST',
