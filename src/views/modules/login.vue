@@ -83,7 +83,36 @@ if (isPlatform('capacitor')) {
   registerNotifications()
 }
 
+const customAlert = async (field: any) => {
+  const alert = await alertController.create({
+    header: 'Warning',
+    message: `${field} is required!`,
+    buttons: ['OK'],
+  });
+  await alert.present();
+}
+
 const login = async () => {
+  const usernameValue = username.value.trim();
+  const passwordValue = password.value.trim();
+
+  // Regular expression patterns for validation
+  const symbolPattern = /[!@#$%^&*(),.?":{}|<>]/;
+  const whitespacePattern = /\s/;
+
+  if (usernameValue === '') {
+    customAlert('Username');
+    return;
+  } else if (symbolPattern.test(usernameValue) || whitespacePattern.test(usernameValue)) {
+    customAlert('Username cannot contain symbols or whitespace');
+    return;
+  }
+
+  if (passwordValue === '' || whitespacePattern.test(passwordValue)) {
+    customAlert('Password');
+    return;
+  }
+
   try {
     const payload = {
       username: username.value,
