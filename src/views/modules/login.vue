@@ -83,10 +83,10 @@ if (isPlatform('capacitor')) {
   registerNotifications()
 }
 
-const customAlert = async (field: any) => {
+const customAlert = async (msg: any) => {
   const alert = await alertController.create({
     header: 'Warning',
-    message: `${field} is required!`,
+    message: `${msg}`,
     buttons: ['OK'],
   });
   await alert.present();
@@ -101,7 +101,7 @@ const login = async () => {
   const whitespacePattern = /\s/;
 
   if (usernameValue === '') {
-    customAlert('Username');
+    customAlert('Username is required!');
     return;
   } else if (symbolPattern.test(usernameValue) || whitespacePattern.test(usernameValue)) {
     customAlert('Username cannot contain symbols or whitespace');
@@ -109,7 +109,7 @@ const login = async () => {
   }
 
   if (passwordValue === '' || whitespacePattern.test(passwordValue)) {
-    customAlert('Password');
+    customAlert('Password is required!');
     return;
   }
 

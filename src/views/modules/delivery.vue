@@ -14,6 +14,7 @@
                                 <h3>Customer Address: {{ TRANSACTION[0]?.customer_address }}</h3>
                                 <h3>Status: {{ TRANSACTION[0]?.status }}</h3>
                                 <h3>Contact: {{ TRANSACTION[0]?.phone_number }}</h3>
+                                <h3>Date: {{ formatDate(TRANSACTION[0]?.created_at) }}</h3>
                             </ion-label>
                         </ion-item>
                     </ion-list>
@@ -100,6 +101,7 @@ import mapComp from "@/views/components/map.vue";
 import { computed, ref, watch } from 'vue';
 import { onIonViewWillEnter } from '@ionic/vue';
 import { useStore } from 'vuex';
+import moment from 'moment';
 
 const store = useStore();
 const loaded = ref(false)
@@ -185,13 +187,21 @@ const GET_IN_PROGRESS_TRANSACTION = () => {
     })
 }
 
+const formatDate = (date: any) => {
+    return moment(date).format('MMMM D, YYYY - hh:mm A')
+};
+
+
 const DECLINE_ORDER = () => {
     countdown.value = 0
-    // clearInterval(intervalId);
+    clearInterval(intervalId);
+    remainingSeconds.value = defaultCountdown.value
+    progress.value = 1
 }
 
 const ACCEPT_TRANSACTION = () => {
     countdown.value = 0
+    remainingSeconds.value = 0
     hasDeliver.value = true
     const payload = {
         transaction_id: CURRENT_TRANSACTION_ID.value,
@@ -256,6 +266,7 @@ const FIND_NEAR_BY = async () => {
                 intervalId = setInterval(decrementProgress, decrementIntervalMilliseconds);
                 loaded.value = true
                 store.commit('TRANSACTION', response)
+                console.log(TRANSACTION.value)
                 store.commit('ORDER_STORE_LAT_LNG', TRANSACTION.value[0].orders)
                 newOrder.value = true
                 countdown.value = defaultCountdown.value
