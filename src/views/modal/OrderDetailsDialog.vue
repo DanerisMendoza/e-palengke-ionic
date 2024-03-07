@@ -59,8 +59,8 @@
           <ion-card v-if="DELIVERY_PERSON_DETAILS != null">
             <ion-card-content>
               <ion-list>
-                <ion-item lines="none" style="translate: -35%;">
-                  <img :src="DELIVERY_PERSON_DETAILS.base64img" slot="end" alt="" width="50"  />
+                <ion-item lines="none" >
+                  <img :src="DELIVERY_PERSON_DETAILS.base64img" alt="" width="50"/>
                 </ion-item>
                 <ion-item lines="none">
                   <ion-label size="12">Name: {{ DELIVERY_PERSON_DETAILS.name }}</ion-label>
