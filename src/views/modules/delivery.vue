@@ -18,7 +18,7 @@
                             </ion-label>
                         </ion-item>
                     </ion-list>
-                  
+
                     <ion-list>
                         <ion-item lines="none">
                             <ion-label>
@@ -27,7 +27,7 @@
                                     <h3>Store Address: {{ item.address }}</h3>
                                     <h3>Store Name: {{ item.name }}</h3>
                                     <div v-for="(item2, index2) in item.order_details" :key="index2">
-                                        <h3>  {{ item2.quantity }} {{ item2.name }} ₱{{ item2.price }}</h3>
+                                        <h3> {{ item2.quantity }} {{ item2.name }} ₱{{ item2.price }}</h3>
                                     </div>
                                     <br>
                                 </div>
@@ -83,7 +83,8 @@
                     </ion-row>
                     <ion-row v-else-if="TRANSACTION[0]?.status == 'Picked up'">
                         <ion-col size="12">
-                            <ion-button :strong="true" fill="solid" @click="DROP_OFF" expand="block">Drop off</ion-button>
+                            <ion-button :strong="true" fill="solid" @click="DROP_OFF" expand="block">Drop
+                                off</ion-button>
                         </ion-col>
                     </ion-row>
                 </ion-grid>
@@ -92,7 +93,7 @@
         </ion-footer>
     </ion-page>
 </template>
-  
+
 <script setup lang="ts">
 import { IonChip, IonProgressBar, IonCol, IonRow, IonGrid, IonFooter, IonItemDivider, IonCard, IonCardContent, IonSkeletonText, IonLabel, IonThumbnail, IonListHeader, IonList, IonToggle, IonButtons, IonMenuToggle, IonIcon, IonContent, IonHeader, IonPage, IonTitle, IonToolbar, IonItem, IonInput, IonButton, useIonRouter } from '@ionic/vue';
 import { menu } from 'ionicons/icons';
@@ -153,7 +154,7 @@ const decrementProgress = () => {
     }
     else {
         clearInterval(intervalId);
-        if(TRANSACTION.value.length == 0){
+        if (TRANSACTION.value.length == 0) {
             store.commit('ORDER_STORE_LAT_LNG', [])
             store.commit('TRANSACTION', [])
             newOrder.value = false
@@ -197,6 +198,10 @@ const DECLINE_ORDER = () => {
     clearInterval(intervalId);
     remainingSeconds.value = defaultCountdown.value
     progress.value = 1
+    const payload = {
+        transaction_id: CURRENT_TRANSACTION_ID.value,
+    }
+    store.dispatch('REMOVE_TRANSACTION_DELIVERY_ID', payload)
 }
 
 const ACCEPT_TRANSACTION = () => {

@@ -2,8 +2,8 @@
 import axios from "axios";
 
 // const URL = "http://127.0.0.1:8000/";
-const URL = "http://192.168.1.4:5000/";
-// const URL = "https://backend.epalengke.shop/";
+// const URL = "http://192.168.1.4:5000/";
+const URL = "https://backend.epalengke.shop/";
 
 const instance = axios.create({
     baseURL:URL,
