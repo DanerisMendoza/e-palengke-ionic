@@ -8,6 +8,9 @@
 
     <ion-content :fullscreen="true">
       <div id="login-container">
+        <ion-item lines="none">
+          <img src="../../assets/logo4.png" alt="E-Palengke Logo" width="150"/>
+        </ion-item>
         <ion-item>
           <ion-input v-model="username" placeholder="Username: "></ion-input>
         </ion-item>
@@ -161,7 +164,7 @@ const login = async () => {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  height: 100%;
+  height: 80%;
 }
 
 ion-item {
