@@ -8,8 +8,8 @@
 
     <ion-content :fullscreen="true">
       <div id="login-container">
-        <ion-item lines="none">
-          <img src="../../assets/logo4.png" alt="E-Palengke Logo" width="150"/>
+        <ion-item lines="none" class="ion-padding">
+          <img src="../../assets/logo4.png" alt="E-Palengke Logo" width="150" />
         </ion-item>
         <ion-item>
           <ion-input v-model="username" placeholder="Username: "></ion-input>
